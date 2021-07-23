@@ -2,7 +2,6 @@
 local path = GetParentPath(...)
 local VERSION = "0.2.0"
 local extensions = {
-	"cutils",
 	"assert",
 	"board",
 	"pawn",
@@ -12,7 +11,8 @@ local tests = {
 	"pawn",
 }
 local modules = {
-	"scripts"
+	"scripts",
+	"cutils",
 }
 
 local function onModsInitialized()
