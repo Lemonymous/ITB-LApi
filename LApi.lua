@@ -48,14 +48,14 @@ if LApi == nil or modApi:isVersion(VERSION, LApi.version) then
 	LApi.version = VERSION
 
 	function LApi:finalizeInit()
-		self.scripts:init(path.."extensions/", extensions)
 		self.scripts:init(path.."modules/", modules)
+		self.scripts:init(path.."extensions/", extensions)
 	end
 
 	function LApi:finalizeLoad()
+		self.scripts:load(path.."modules/", modules)
 		self.scripts:load(path.."extensions/", extensions)
 		self.scripts:load(path.."tests/", tests)
-		self.scripts:load(path.."modules/", modules)
 	end
 
 	function LApi:load()
