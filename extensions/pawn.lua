@@ -107,41 +107,6 @@ BoardPawn.SetImpactMaterial = function(self, impactMaterial)
 	CUtils.SetPawnImpactMaterial(self, impactMaterial)
 end
 
-BoardPawn.GetColor = function(self)
-	Assert.Signature{
-		ret = "int",
-		func = "GetColor",
-		params = { self },
-		{ "userdata|BoardPawn&" }
-	}
-	
-	return CUtils.GetPawnColor(self)
-end
-
-BoardPawn.SetColor = function(self, iColor)
-	Assert.Signature{
-		ret = "void",
-		func = "SetColor",
-		params = { self, iColor },
-		{ "userdata|BoardPawn&", "number|int" }
-	}
-	
-	iColor = math.max(0, math.min(iColor, GetColorCount() - 1))
-	
-	CUtils.SetPawnColor(self, iColor)
-end
-
-BoardPawn.IsPlayerControlled = function(self)
-	Assert.Signature{
-		ret = "bool",
-		func = "IsPlayerControlled",
-		params = { self },
-		{ "userdata|BoardPawn&" }
-	}
-	
-	return CUtils.IsPawnPlayerControlled(self)
-end
-
 BoardPawn.IsMassive = function(self)
 	Assert.Signature{
 		ret = "bool",
