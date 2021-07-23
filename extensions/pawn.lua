@@ -1,8 +1,11 @@
 
+local cutils = LApi.cutils:get()
+
 BoardPawn.ClearUndoMove = function(self)
 	Assert.Equals("userdata", type(self), "Argument #0")
 	
-	CUtils.PawnClearUndoMove(self)
+	cutils.Pawn:SetUndoX(self, -1)
+	cutils.Pawn:SetUndoY(self, -1)
 end
 
 BoardPawn.SetUndoLoc = function(self, loc)
@@ -13,7 +16,8 @@ BoardPawn.SetUndoLoc = function(self, loc)
 		{ "userdata|BoardPawn&", "userdata|Point" },
 	}
 	
-	CUtils.SetPawnUndoLoc(self, loc)
+	cutils.Pawn:SetUndoX(self, loc.x)
+	cutils.Pawn:SetUndoY(self, loc.y)
 end
 
 BoardPawn.GetUndoLoc = function(self)
@@ -24,7 +28,10 @@ BoardPawn.GetUndoLoc = function(self)
 		{ "userdata|BoardPawn&" },
 	}
 	
-	return CUtils.GetPawnUndoLoc(self)
+	return Point(
+		cutils.Pawn:GetUndoX(self),
+		cutils.Pawn:GetUndoY(self)
+	)
 end
 
 BoardPawn.GetOwner = function(self)
@@ -35,7 +42,7 @@ BoardPawn.GetOwner = function(self)
 		{ "userdata|BoardPawn&" }
 	}
 	
-	return CUtils.GetPawnOwner(self)
+	return cutils.Pawn.GetOwner(self)
 end
 
 BoardPawn.SetOwner = function(self, iOwner)
@@ -56,7 +63,7 @@ BoardPawn.SetOwner = function(self, iOwner)
 		return
 	end
 	
-	return CUtils.SetPawnOwner(self, iOwner)
+	return cutils.Pawn.SetOwner(self, iOwner)
 end
 
 BoardPawn.SetFire = function(self, fire)
@@ -71,7 +78,7 @@ BoardPawn.SetFire = function(self, fire)
 		fire = true
 	end
 	
-	CUtils.SetPawnFire(self, fire)
+	cutils.Pawn.SetFire(self, fire)
 end
 
 BoardPawn.IsHighlighted = function(self)
@@ -82,7 +89,7 @@ BoardPawn.IsHighlighted = function(self)
 		{ "userdata|BoardPawn&" }
 	}
 	
-	return Board:IsHighlighted(self:GetSpace())
+	return cutils.Board.IsHighlighted(self:GetSpace())
 end
 
 BoardPawn.GetImpactMaterial = function(self)
@@ -93,7 +100,7 @@ BoardPawn.GetImpactMaterial = function(self)
 		{ "userdata|BoardPawn&" }
 	}
 	
-	return CUtils.GetPawnImpactMaterial(self)
+	return cutils.Pawn.GetImpactMaterial(self)
 end
 
 BoardPawn.SetImpactMaterial = function(self, impactMaterial)
@@ -104,7 +111,7 @@ BoardPawn.SetImpactMaterial = function(self, impactMaterial)
 		{ "userdata|BoardPawn&", "number|int" }
 	}
 	
-	CUtils.SetPawnImpactMaterial(self, impactMaterial)
+	cutils.Pawn.SetImpactMaterial(self, impactMaterial)
 end
 
 BoardPawn.IsMassive = function(self)
@@ -115,7 +122,7 @@ BoardPawn.IsMassive = function(self)
 		{ "userdata|BoardPawn&" }
 	}
 	
-	return CUtils.IsPawnMassive(self)
+	return cutils.Pawn.IsMassive(self)
 end
 
 BoardPawn.SetMassive = function(self, massive)
@@ -131,7 +138,7 @@ BoardPawn.SetMassive = function(self, massive)
 		massive = true
 	end
 	
-	CUtils.SetPawnMassive(self, massive)
+	cutils.Pawn.SetMassive(self, massive)
 end
 
 BoardPawn.IsMovementAvailable = function(self)
@@ -142,7 +149,7 @@ BoardPawn.IsMovementAvailable = function(self)
 		{ "userdata|BoardPawn&" }
 	}
 	
-	return not CUtils.IsPawnMovementSpent(self)
+	return not cutils.Pawn.IsMoveSpent(self)
 end
 
 BoardPawn.SetMovementAvailable = function(self, movementAvailable)
@@ -158,7 +165,7 @@ BoardPawn.SetMovementAvailable = function(self, movementAvailable)
 		movementAvailable = true
 	end
 	
-	CUtils.SetPawnMovementSpent(self, not movementAvailable)
+	cutils.Pawn.SetMoveSpent(self, not movementAvailable)
 end
 
 BoardPawn.SetFlying = function(self, flying)
@@ -174,7 +181,7 @@ BoardPawn.SetFlying = function(self, flying)
 		flag = true
 	end
 	
-	CUtils.SetPawnFlying(self, flying)
+	cutils.Pawn.SetFlying(self, flying)
 end
 
 BoardPawn.SetTeleporter = function(self, teleporter)
@@ -190,7 +197,7 @@ BoardPawn.SetTeleporter = function(self, teleporter)
 		teleporter = true
 	end
 	
-	CUtils.SetPawnTeleporter(self, teleporter)
+	cutils.Pawn.SetTeleporter(self, teleporter)
 end
 
 BoardPawn.SetJumper = function(self, jumper)
@@ -206,7 +213,7 @@ BoardPawn.SetJumper = function(self, jumper)
 		jumper = true
 	end
 	
-	CUtils.SetPawnJumper(self, jumper)
+	cutils.Pawn.SetJumper(self, jumper)
 end
 
 BoardPawn.GetMaxHealth = function(self)
@@ -217,7 +224,7 @@ BoardPawn.GetMaxHealth = function(self)
 		{ "userdata|BoardPawn&" }
 	}
 	
-	return CUtils.GetPawnMaxHealth(self)
+	return cutils.Pawn.GetMaxHealth(self)
 end
 
 BoardPawn.GetBaseMaxHealth = function(self)
@@ -228,7 +235,7 @@ BoardPawn.GetBaseMaxHealth = function(self)
 		{ "userdata|BoardPawn&" }
 	}
 	
-	return CUtils.GetPawnBaseMaxHealth(self)
+	return cutils.Pawn.GetBaseMaxHealth(self)
 end
 
 BoardPawn.SetHealth = function(self, hp)
@@ -242,7 +249,7 @@ BoardPawn.SetHealth = function(self, hp)
 	local hp_max = self:GetMaxHealth()
 	hp = math.max(0, math.min(hp, hp_max))
 	
-	CUtils.SetPawnHealth(self, hp)
+	cutils.Pawn.SetHealth(self, hp)
 end
 
 BoardPawn.SetMaxHealth = function(self, hp_max)
@@ -253,7 +260,7 @@ BoardPawn.SetMaxHealth = function(self, hp_max)
 		{ "userdata|BoardPawn&", "number|int" }
 	}
 	
-	CUtils.SetPawnMaxHealth(self, hp_max)
+	cutils.Pawn.SetMaxHealth(self, hp_max)
 end
 
 BoardPawn.SetBaseMaxHealth = function(self, hp_max_base)
@@ -264,6 +271,7 @@ BoardPawn.SetBaseMaxHealth = function(self, hp_max_base)
 		{ "userdata|BoardPawn&", "number|int" }
 	}
 	
+	cutils.Pawn.SetBaseMaxHealth(self, hp_max_base)
 end
 
 
@@ -307,7 +315,7 @@ function InitializeBoardPawn()
 		}
 		
 		if isMech == false then
-			CUtils.SetPawnMech(self, isMech)
+			cutils.Pawn.SetMech(self, isMech)
 		elseif getMechCount() < 3 then
 			oldSetMech(self)
 		end
@@ -322,7 +330,7 @@ function InitializeBoardPawn()
 			{ "userdata|BoardPawn&" }
 		}
 		
-		return CUtils.IsPawnTeleporter(self)
+		return cutils.Pawn.IsTeleporter(self)
 	end
 	
 	-- vanilla function only looks in pawn type table.
@@ -334,14 +342,14 @@ function InitializeBoardPawn()
 			{ "userdata|BoardPawn&" }
 		}
 		
-		return CUtils.IsPawnJumper(self)
+		return cutils.Pawn.IsJumper(self)
 	end
 	
 	-- extend vanilla function to apply status without animation
 	local oldSetFrozen = pawn.SetFrozen
 	BoardPawn.SetFrozen = function(self, frozen, no_animation)
 		if no_animation then
-			return CUtils.SetPawnFrozen(self, frozen)
+			return cutils.Pawn.SetFrozen(self, frozen)
 		end
 		
 		return oldSetFrozen(self, frozen)
@@ -351,7 +359,7 @@ function InitializeBoardPawn()
 	local oldSetShield = pawn.SetShield
 	BoardPawn.SetShield = function(self, shield, no_animation)
 		if no_animation then
-			return CUtils.SetPawnShield(self, shield)
+			return cutils.Pawn.SetShield(self, shield)
 		end
 		
 		return oldSetShield(self, shield)
@@ -361,7 +369,7 @@ function InitializeBoardPawn()
 	local oldSetAcid = pawn.SetAcid
 	BoardPawn.SetAcid = function(self, acid, no_animation)
 		if no_animation then
-			return CUtils.SetPawnAcid(self, acid)
+			return cutils.Pawn.SetAcid(self, acid)
 		end
 		
 		return oldSetAcid(self, acid)
