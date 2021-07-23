@@ -11,7 +11,8 @@ local NAME = "cutils-dll"
 local cutils = {}
 
 function cutils:init()
-	local options = mod_loader.currentModContent[mod_id].options
+	local currentModContent = mod_loader.currentModContent
+	local options = currentModContent and currentModContent[mod_id].options or {}
 	local ok, err = pcall(package.loadlib(cutilsPath, "luaopen_inspect"), {
 		name = NAME,
 		debug = options.cutils_debug or false,
