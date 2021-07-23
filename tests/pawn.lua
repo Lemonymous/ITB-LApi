@@ -19,38 +19,6 @@ Testsuites.lapi.pawn.name = "LApi-Pawn-related tests"
 
 local testsuite = Testsuites.lapi.pawn
 
---[[
-local tests = LApi.Tests
-
-tests:AddTests{
-	"PawnGetOwner",
-	"PawnSetOwner",
-	"PawnSetFire",
-	"PawnGetImpactMaterial",
-	"PawnSetImpactMaterial",
-	"PawnGetColor",
-	"PawnSetColor",
-	"PawnIsMassive",
-	"PawnSetMassive",
-	--IsMovementAvailable
-	--SetMovementAvailable
-	"PawnSetFlying",
-	"PawnSetTeleporter",
-	"PawnSetJumper",
-	"PawnGetMaxHealth",
-	"PawnGetBaseMaxHealth",
-	"PawnSetHealth",
-	"PawnSetMaxHealth",
-	"PawnSetBaseMaxHealth",
-	"PawnGetWeaponCount",
-	"PawnGetWeaponType",
-	--"PawnGetWeaponClass",
-	"PawnRemoveWeapon",
-	--GetPilot
-	--SetMech
-	--IsTeleporter
-	--IsJumper
-}]]
 
 LApi_TEST_WEAPON = Prime_Punchmech:new{}
 LApi_TEST_MECH = PunchMech:new{}
@@ -157,34 +125,6 @@ function testsuite.test_PawnSetImpactMaterial()
 	
 	Assert.True(insect)
 	Assert.True(blob)
-	
-	return true
-end
-
-function testsuite.test_PawnGetColor()
-	LApi_TEST_MECH = PunchMech:new{ ImageOffset = 0 }
-	local pawn = PAWN_FACTORY:CreatePawn("LApi_TEST_MECH")
-	local color0 = pawn:GetColor()
-	
-	LApi_TEST_MECH = PunchMech:new{ ImageOffset = 1 }
-	local pawn = PAWN_FACTORY:CreatePawn("LApi_TEST_MECH")
-	local color1 = pawn:GetColor()
-	
-	Assert.Equals(0, color0)
-	Assert.Equals(1, color1)
-	
-	return true
-end
-
-function testsuite.test_PawnSetColor()
-	LApi_TEST_MECH = PunchMech:new{ ImageOffset = 0 }
-	local pawn = PAWN_FACTORY:CreatePawn("LApi_TEST_MECH")
-	
-						local color0 = pawn:GetColor()
-	pawn:SetColor(1);	local color1 = pawn:GetColor()
-	
-	Assert.Equals(0, color0)
-	Assert.Equals(1, color1)
 	
 	return true
 end
@@ -330,59 +270,6 @@ function testsuite.test_PawnSetBaseMaxHealth()
 	
 	Assert.Equals(5, baseMaxHealth5)
 	Assert.Equals(7, baseMaxHealth7)
-	
-	return true
-end
-
-function testsuite.test_PawnGetWeaponCount()
-	LApi_TEST_MECH = PunchMech:new{ SkillList = { "Prime_Punchmech" } }
-	local pawn = PAWN_FACTORY:CreatePawn("LApi_TEST_MECH")
-	local weaponCount1 = pawn:GetWeaponCount()
-	
-	LApi_TEST_MECH = PunchMech:new{ SkillList = { "Prime_Punchmech", "Brute_Tankmech" } }
-	local pawn = PAWN_FACTORY:CreatePawn("LApi_TEST_MECH")
-	local weaponCount2 = pawn:GetWeaponCount()
-	
-	Assert.Equals(1, weaponCount1)
-	Assert.Equals(2, weaponCount2)
-	
-	return true
-end
-
-function testsuite.test_PawnGetWeaponType()
-	LApi_TEST_MECH = PunchMech:new{ SkillList = { "Prime_Punchmech", "Brute_Tankmech" } }
-	local pawn = PAWN_FACTORY:CreatePawn("LApi_TEST_MECH")
-	local weaponType1 = pawn:GetWeaponType(1) == "Prime_Punchmech"
-	local weaponType2 = pawn:GetWeaponType(2) == "Brute_Tankmech"
-	
-	Assert.Equals("Prime_Punchmech", weaponType1)
-	Assert.Equals("Brute_Tankmech", weaponType2)
-	
-	return true
-end
-
-function testsuite.test_PawnGetWeaponClass()
-	LApi_TEST_MECH = PunchMech:new{ SkillList = { "Prime_Punchmech", "Brute_Tankmech" } }
-	local pawn = PAWN_FACTORY:CreatePawn("LApi_TEST_MECH")
-	local weaponClass1 = pawn:GetWeaponClass(1)
-	local weaponClass2 = pawn:GetWeaponClass(2)
-	
-	Assert.Equals(_G["Prime_Punchmech"].Class, weaponClass1)
-	Assert.Equals(_G["Brute_Tankmech"].Class, weaponClass2)
-	
-	return true
-end
-
-function testsuite.test_PawnRemoveWeapon()
-	LApi_TEST_MECH = PunchMech:new{ SkillList = { "Prime_Punchmech", "Brute_Tankmech" } }
-	local pawn = PAWN_FACTORY:CreatePawn("LApi_TEST_MECH")
-	local weaponCount2 = pawn:GetWeaponCount()
-	
-	pawn:RemoveWeapon(1)
-	local weaponCount1 = pawn:GetWeaponCount()
-	
-	Assert.Equals(2, weaponCount2)
-	Assert.Equals(1, weaponCount1)
 	
 	return true
 end

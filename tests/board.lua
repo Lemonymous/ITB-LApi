@@ -29,40 +29,6 @@ function testsuite.test_BoardSetFire()
 	return true
 end
 
-function testsuite.test_BoardIsForest()
-	local loc = Point(0,0)
-	Board:ClearSpace(loc)
-	
-											local notForest = Board:IsForest(loc) == false
-	Board:SetTerrain(loc, TERRAIN_FOREST);	local forest = Board:IsForest(loc) == true
-	Board:SetFire(loc, true);				local forestFire =  Board:IsForest(loc) == true
-	Board:SetFire(loc, false);				local extinguishedForestFire = Board:IsForest(loc) == true
-	
-	Assert.True(notForest)
-	Assert.True(forest)
-	Assert.True(forestFire)
-	Assert.True(extinguishedForestFire)
-	
-	return true
-end
-
-function testsuite.test_BoardIsForestFire()
-	local loc = Point(0,0)
-	Board:ClearSpace(loc)
-	
-											local notForest = Board:IsForestFire(loc) == false
-	Board:SetTerrain(loc, TERRAIN_FOREST);	local forest = Board:IsForestFire(loc) == false
-	Board:SetFire(loc, true);				local forestFire = Board:IsForestFire(loc) == true
-	Board:SetFire(loc, false);				local isExtinguishedForestFire = Board:IsForestFire(loc) == false
-	
-	Assert.True(notForest)
-	Assert.True(forest)
-	Assert.True(forestFire)
-	Assert.True(isExtinguishedForestFire)
-	
-	return true
-end
-
 function testsuite.test_BoardIsShield()
 	local loc = Point(0,0)
 	Board:ClearSpace(loc)
@@ -231,45 +197,6 @@ function testsuite.test_BoardSetRubble()
 	return true
 end
 
-function testsuite.test_BoardSetUniqueBuilding()
-	local loc = Point(0,0)
-	Board:ClearSpace(loc)
-	Board:SetTerrain(loc, TERRAIN_BUILDING)
-	
-	Board:SetUniqueBuilding(loc, "str_bar1");	local uniqueBuilding = Board:IsUniqueBuilding(loc) == true
-	Board:RemoveUniqueBuilding(loc);
-	
-	Assert.True(uniqueBuilding)
-	
-	return true
-end
-
-function testsuite.test_BoardGetUniqueBuilding()
-	local loc = Point(0,0)
-	Board:ClearSpace(loc)
-	Board:SetTerrain(loc, TERRAIN_BUILDING)
-	
-	Board:SetUniqueBuilding(loc, "str_bar1");	local uniqueBuilding = Board:GetUniqueBuilding(loc)
-	Board:RemoveUniqueBuilding(loc);
-	
-	Assert.Equals("str_bar1", uniqueBuilding)
-	
-	return true
-end
-
-function testsuite.test_BoardRemoveUniqueBuilding()
-	local loc = Point(0,0)
-	Board:ClearSpace(loc)
-	Board:SetTerrain(loc, TERRAIN_BUILDING)
-	
-	Board:SetUniqueBuilding(loc, "str_bar1")
-	Board:RemoveUniqueBuilding(loc);			local removedUniqueBuilding = Board:GetUniqueBuilding(loc)
-	
-	Assert.Equals("", removedUniqueBuilding)
-	
-	return true
-end
-
 function testsuite.test_BoardGetItemName()
 	local loc = Point(0,0)
 	Board:ClearSpace(loc)
@@ -277,18 +204,6 @@ function testsuite.test_BoardGetItemName()
 	Board:SetItem(loc, "Item_Mine");	local mine = Board:GetItemName(loc)
 	
 	Assert.Equals("Item_Mine", mine)
-	
-	return true
-end
-
-function testsuite.test_BoardRemoveItem()
-	local loc = Point(0,0)
-	Board:ClearSpace(loc)
-	
-	Board:SetItem(loc, "Item_Mine");
-	Board:RemoveItem(loc);				local noMine = Board:GetItemName(loc)
-	
-	Assert.Equals(nil, mine)
 	
 	return true
 end
