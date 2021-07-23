@@ -21,45 +21,6 @@ for _, fn_name in ipairs(mod_loader_functions) do
 	BoardClassEx[fn_name] = BoardClass[fn_name]
 end
 
-BoardClassEx.SetFire = function(self, loc, fire)
-	Assert.Signature{
-		ret = "void",
-		func = "SetFire",
-		params = { self, loc, fire },
-		{ "userdata|GameBoard&", "userdata|Point", "boolean|bool" },
-		{ "userdata|GameBoard&", "userdata|Point" }
-	}
-	
-	if fire == nil then
-		fire = true
-	end
-	
-	CUtils.SetTileFire(self, loc, fire)
-end
-
--- returns true if tile is a forest, even if it is on fire.
-BoardClassEx.IsForest = function(self, loc)
-	Assert.Signature{
-		ret = "bool",
-		func = "IsForest",
-		params = { self, loc },
-		{ "userdata|GameBoard&", "userdata|Point" }
-	}
-	
-	return CUtils.IsTileForest(self, loc)
-end
-
-BoardClassEx.IsForestFire = function(self, loc)
-	Assert.Signature{
-		ret = "bool",
-		func = "IsForestFire",
-		params = { self, loc },
-		{ "userdata|GameBoard&", "userdata|Point" }
-	}
-	
-	return CUtils.IsTileForestFire(self, loc)
-end
-
 BoardClassEx.IsShield = function(self, loc)
 	Assert.Signature{
 		ret = "bool",
@@ -374,55 +335,6 @@ BoardClassEx.SetSnow = function(self, loc, snow)
 	end
 end
 
-BoardClassEx.SetUniqueBuilding = function(self, loc, buildingId)
-	Assert.Signature{
-		ret = "void",
-		func = "SetUniqueBuilding",
-		params = { self, loc, buildingId },
-		{ "userdata|GameBoard&", "userdata|Point", "string|string" }
-	}
-	
-	CUtils.TileSetUniqueBuilding(self, loc, buildingId)
-end
-
-BoardClassEx.GetUniqueBuilding = function(self, loc)
-	Assert.Signature{
-		ret = "string",
-		func = "GetUniqueBuilding",
-		params = { self, loc },
-		{ "userdata|GameBoard&", "userdata|Point" }
-	}
-	
-	return CUtils.TileGetUniqueBuilding(self, loc)
-end
-
-BoardClassEx.RemoveUniqueBuilding = function(self, loc)
-	Assert.Signature{
-		ret = "void",
-		func = "RemoveUniqueBuilding",
-		params = { self, loc },
-		{ "userdata|GameBoard&", "userdata|Point" }
-	}
-	
-	CUtils.TileRemoveUniqueBuilding(self, loc)
-	self:SetBuilding(loc)
-end
-
-BoardClassEx.RemoveItem = function(self, loc)
-	Assert.Signature{
-		ret = "void",
-		func = "RemoveItem",
-		params = { self, loc },
-		{ "userdata|GameBoard&", "userdata|Point" }
-	}
-	
-	if not self:IsItem(loc) then
-		return
-	end
-	
-	CUtils.TileRemoveItem(self, loc)
-end
-
 BoardClassEx.GetItemName = function(self, loc)
 	Assert.Signature{
 		ret = "string",
@@ -459,18 +371,8 @@ BoardClassEx.IsHighlighted = function(self, loc)
 	
 	return CUtils.IsTileHighlighted(self, loc)
 end
-
---[[BoardClassEx.GetSelectedPawn = function(self)
-	local pawns = Board:GetPawns(TEAM_ANY)
-	for i = 1, pawns:size() do
-		local pawn = Board:GetPawn(pawns:index(i))
-		if pawn and pawn:IsSelected() then
-			return pawn
-		end
 	end
 	
-	return nil
-end]]
 
 BoardClassEx.MarkGridLoss = function(self, loc, grid_loss)
 	Assert.Signature{
