@@ -299,47 +299,8 @@ BoardPawn.SetBaseMaxHealth = function(self, hp_max_base)
 		{ "userdata|BoardPawn&", "number|int" }
 	}
 	
-	CUtils.SetPawnBaseMaxHealth(self, hp_max_base)
 end
 
-
-BoardPawn.MarkHpLoss = function(self, hp_loss)
-	CUtils.PawnMarkHpLoss(self, hp_loss)
-end
-
-
-BoardPawn.GetWeaponCount = function(self)
-	return CUtils.PawnGetWeaponCount(self)
-end
-
-BoardPawn.GetWeaponType = function(self, index)
-	return CUtils.PawnGetWeaponType(self, index)
-end
-
-BoardPawn.GetWeaponClass = function(self, index)
-	return CUtils.PawnGetWeaponClass(self, index)
-end
-
-BoardPawn.GetMoveSkill = function(self)
-	return CUtils.PawnGetMoveSkill(self)
-end
-
-
-BoardPawn.RemoveWeapon = function(self, index)
-	return CUtils.PawnRemoveWeapon(self, index)
-end
-
-BoardPawn.SetMoveSkill = function(self, skill)
-	CUtils.PawnSetMoveSkill(self, skill)
-end
-
-BoardPawn.SetRepairSkill = function(self, skill)
-	CUtils.PawnSetRepairSkill(self, skill)
-end
-
-BoardPawn.GetPilot = function(self)
-	return CUtils.PawnGetPilot(self)
-end
 
 local modloaderInitializeBoardPawn = InitializeBoardPawn
 function InitializeBoardPawn()
@@ -439,10 +400,5 @@ function InitializeBoardPawn()
 		end
 		
 		return oldSetAcid(self, acid)
-	end
-	
-	-- modified and improved version of vanilla Pawn.AddWeapon
-	BoardPawn.AddWeaponEx = function(self, weapon)
-		CUtils.PawnAddWeapon(self, weapon)
 	end
 end
