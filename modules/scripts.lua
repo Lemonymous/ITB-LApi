@@ -24,32 +24,31 @@ local function runScripts(parentPath, scripts, fn, ...)
 	if type(parentPath) ~= 'string' then
 		return
 	end
-	
+
 	if type(scripts) ~= 'table' then
 		scripts = {scripts}
 	end
-	
+
 	for _, subPath in ipairs(scripts) do
 		local path = parentPath .. subPath
-		
+
 		if isDirectory(path) then
 			if modApi:directoryExists(path) then
 				runScripts(path, mod_loader:enumerateFilesIn(path), fn, ...)
 			else
 				LOGD("Failed to %s %q: Directory does not exist", fn, path)
 			end
-			
 		else
 			if not hasFileExtension(path) then
 				path = path ..".lua"
 			end
-			
+
 			local name = pruneExtension(path)
-			
+
 			if hasLuaFileExtension(path) then
 				if modApi:fileExists(path) then
 					local component = require(name)
-					
+
 					if fn and type(component) == 'table' and type(component[fn]) == 'function' then
 						LOGD(MODES[fn][2].." "..name.." ...")
 						component[fn](component, ...)
