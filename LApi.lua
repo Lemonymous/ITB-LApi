@@ -13,6 +13,7 @@ local tests = {
 local modules = {
 	"scripts",
 	"cutils",
+	"worldConstants",
 }
 
 local function onModsInitialized()
