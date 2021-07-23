@@ -14,6 +14,7 @@ local modules = {
 	"scripts",
 	"cutils",
 	"worldConstants",
+	"astar",
 }
 
 local function onModsInitialized()
