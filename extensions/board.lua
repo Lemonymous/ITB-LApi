@@ -1,4 +1,6 @@
 
+local cutils = LApi.cutils:get()
+
 TERRAIN_ICE_CRACKED = -1
 TERRAIN_MOUNTAIN_CRACKED = -2
 TERRAIN_FOREST_FIRE = -3
@@ -29,7 +31,7 @@ BoardClassEx.IsShield = function(self, loc)
 		{ "userdata|GameBoard&", "userdata|Point" }
 	}
 	
-	return CUtils.IsTileShield(self, loc)
+	return cutils.Board.IsShield(loc)
 end
 
 BoardClassEx.SetShield = function(self, loc, shield, no_animation)
@@ -57,7 +59,7 @@ BoardClassEx.SetShield = function(self, loc, shield, no_animation)
 	
 	if isShieldableTerrain then
 		if no_animation then
-			CUtils.SetTileShield(self, loc, shield)
+			cutils.Board.SetShield(loc, shield)
 		else
 			local d = SpaceDamage(loc)
 			d.iShield = shield and 1 or -1
@@ -127,7 +129,7 @@ BoardClassEx.GetHealth = function(self, loc)
 		{ "userdata|GameBoard&", "userdata|Point" }
 	}
 	
-	return CUtils.GetTileHealth(self, loc)
+	return cutils.Board.GetHealth(loc)
 end
 
 BoardClassEx.GetMaxHealth = function(self, loc)
@@ -138,7 +140,7 @@ BoardClassEx.GetMaxHealth = function(self, loc)
 		{ "userdata|GameBoard&", "userdata|Point" }
 	}
 	
-	return CUtils.GetTileMaxHealth(self, loc)
+	return cutils.Board.GetMaxHealth(loc)
 end
 
 BoardClassEx.GetLostHealth = function(self, loc)
@@ -149,7 +151,7 @@ BoardClassEx.GetLostHealth = function(self, loc)
 		{ "userdata|GameBoard&", "userdata|Point" }
 	}
 	
-	return CUtils.GetTileLostHealth(self, loc)
+	return cutils.Board.GetLostHealth(loc)
 end
 
 BoardClassEx.SetHealth = function(self, loc, hp)
@@ -160,11 +162,11 @@ BoardClassEx.SetHealth = function(self, loc, hp)
 		{ "userdata|GameBoard&", "userdata|Point", "number|int" }
 	}
 	
-	local hp_max = CUtils.GetTileMaxHealth(self, loc)
+	local hp_max = cutils.Board.GetMaxHealth(loc)
 	local iTerrain = self:GetTerrain(loc)
 	hp = math.max(0, math.min(hp, hp_max))
 	
-	local rubbleState = CUtils.GetTileRubbleState(self, loc)
+	local rubbleState = cutils.Board.GetRubbleType(loc)
 	local isRubble = iTerrain == TERRAIN_RUBBLE
 	local isBuilding = iTerrain == TERRAIN_BUILDING
 	local isMountain = iTerrain == TERRAIN_MOUNTAIN
@@ -190,7 +192,7 @@ BoardClassEx.SetMaxHealth = function(self, loc, hp_max)
 		{ "userdata|GameBoard&", "userdata|Point", "number|int" }
 	}
 	
-	local rubbleState = CUtils.GetTileRubbleState(self, loc)
+	local rubbleState = cutils.Board.GetRubbleType(loc)
 	local iTerrain = self:GetTerrain(loc)
 	
 	local isBuilding = iTerrain == TERRAIN_BUILDING
@@ -204,7 +206,7 @@ BoardClassEx.SetMaxHealth = function(self, loc, hp_max)
 			hp_max = math.max(1, math.min(4, hp_max))
 		end
 		
-		local hp = CUtils.GetTileHealth(self, loc)
+		local hp = cutils.Board.GetHealth(loc)
 		
 		self:SetBuilding(loc, hp, hp_max)
 	end
@@ -220,11 +222,11 @@ BoardClassEx.SetBuilding = function(self, loc, hp, hp_max)
 		{ "userdata|GameBoard&", "userdata|Point" }
 	}
 	
-	hp_max = hp_max or CUtils.GetTileMaxHealth(self, loc)
-	hp = hp or CUtils.GetTileHealth(self, loc)
+	hp_max = hp_max or cutils.Board.GetMaxHealth(loc)
+	hp = hp or cutils.Board.GetHealth(loc)
 	
-	CUtils.SetTileMaxHealth(self, loc, hp_max)
-	CUtils.SetTileHealth(self, loc, hp)
+	cutils.Board.SetMaxHealth(loc, hp_max)
+	cutils.Board.SetHealth(loc, hp)
 	
 	self:SetTerrain(loc, TERRAIN_BUILDING)
 	
@@ -244,8 +246,8 @@ BoardClassEx.SetMountain = function(self, loc, hp)
 	self:SetTerrain(loc, TERRAIN_MOUNTAIN)
 	
 	if hp > 0 then
-		CUtils.SetTileMaxHealth(self, loc, 2)
-		CUtils.SetTileHealth(self, loc, hp)
+		cutils.Board.SetMaxHealth(loc, 2)
+		cutils.Board.SetHealth(loc, hp)
 	else
 		self:SetRubble(loc)
 	end
@@ -262,8 +264,8 @@ BoardClassEx.SetIce = function(self, loc, hp)
 	self:SetTerrain(loc, TERRAIN_ICE)
 	
 	if hp > 0 then
-		CUtils.SetTileMaxHealth(self, loc, 2)
-		CUtils.SetTileHealth(self, loc, hp)
+		cutils.Board.SetMaxHealth(loc, 2)
+		cutils.Board.SetHealth(loc, hp)
 	else
 		self:SetTerrain(loc, TERRAIN_ROAD)
 		self:SetTerrain(loc, TERRAIN_WATER)
@@ -292,13 +294,13 @@ BoardClassEx.SetRubble = function(self, loc, flag)
 			
 		elseif iTerrain == TERRAIN_MOUNTAIN then
 			self:SetTerrain(loc, TERRAIN_ROAD)
-			CUtils.SetTileRubbleState(self, loc, RUBBLE_MOUNTAIN)
+			cutils.Board.SetRubbleType(loc, RUBBLE_MOUNTAIN)
 			self:SetTerrain(loc, TERRAIN_RUBBLE)
 		end
 		
 	elseif iTerrain == TERRAIN_RUBBLE then
 		
-		local rubbleState = CUtils.GetTileRubbleState(self, loc)
+		local rubbleState = cutils.Board.GetRubbleType(loc)
 		
 		if rubbleState == RUBBLE_BUILDING then
 			local hp_max = self:GetMaxHealth(loc)
@@ -347,7 +349,7 @@ BoardClassEx.GetItemName = function(self, loc)
 		return nil
 	end
 	
-	return CUtils.TileGetItemName(self, loc)
+	return cutils.Board.GetItemName(loc)
 end
 
 BoardClassEx.GetHighlighted = function(self)
@@ -358,7 +360,10 @@ BoardClassEx.GetHighlighted = function(self)
 		{ "userdata|GameBoard&" }
 	}
 	
-	return CUtils.BoardGetHighlighted(self)
+	return Point(
+		cutils.Board.GetHighlightedX(),
+		cutils.Board.GetHighlightedY()
+	)
 end
 
 BoardClassEx.IsHighlighted = function(self, loc)
@@ -369,10 +374,12 @@ BoardClassEx.IsHighlighted = function(self, loc)
 		{ "userdata|GameBoard&", "userdata|Point" }
 	}
 	
-	return CUtils.IsTileHighlighted(self, loc)
-end
+	if loc.x < 0 or loc.x > 7 or loc.y < 0 or loc.y > 7 then
+		return false
 	end
 	
+	return cutils.Board.IsHighlighted(loc)
+end
 
 BoardClassEx.MarkGridLoss = function(self, loc, grid_loss)
 	Assert.Signature{
@@ -382,7 +389,7 @@ BoardClassEx.MarkGridLoss = function(self, loc, grid_loss)
 		{ "userdata|GameBoard&", "userdata|Point", "number|int" }
 	}
 	
-	CUtils.TileMarkGridLoss(self, loc, grid_loss)
+	cutils.Board.SetGridLoss(loc, grid_loss)
 end
 
 BoardClassEx.IsGameBoard = function(self)
@@ -393,7 +400,7 @@ BoardClassEx.IsGameBoard = function(self)
 		{ "userdata|GameBoard&" }
 	}
 	
-	return CUtils.IsGameboard(self)
+	return cutils.Board.IsGameboard()
 end
 
 BoardClassEx.IsMissionBoard = BoardClassEx.IsGameBoard
@@ -406,7 +413,7 @@ BoardClassEx.IsTipImage = function(self)
 		{ "userdata|GameBoard&" }
 	}
 	
-	return not CUtils.IsGameboard(self)
+	return not cutils.Board.IsGameboard()
 end
 
 
@@ -476,14 +483,14 @@ function InitializeBoardClass(board)
 			
 			if iTerrain == TERRAIN_RUBBLE then
 				-- keep max health after setting TERRAIN_RUBBLE
-				CUtils.SetTileMaxHealth(self, loc, terrainHealth)
+				cutils.Board.SetMaxHealth(loc, terrainHealth)
 			end
 			
 			if iTerrain == TERRAIN_BUILDING and terrainHealth == 0 then
 				-- update tile after placing building on rubble,
 				-- so visual and functional rubble always returns TERRAIN_RUBBLE
-				CUtils.SetTileRubbleState(self, loc, RUBBLE_BUILDING)
-				CUtils.SetTileTerrain(self, loc, TERRAIN_RUBBLE)
+				cutils.Board.SetRubbleType(loc, RUBBLE_BUILDING)
+				cutils.Board.SetTerrain(loc, TERRAIN_RUBBLE)
 			end
 		end
 	end
@@ -547,11 +554,11 @@ function InitializeBoardClass(board)
 			self:GetPawn(loc):SetFrozen(frozen, no_animation)
 			
 			if frozen then
-				CUtils.SetTileFire(self, loc, false)
+				cutils.Board.SetFire(loc, false)
 			end
 			
 		elseif no_animation and isFreezeableTerrain then
-			CUtils.SetTileFrozen(self, loc, frozen)
+			cutils.Board.SetFrozen(loc, frozen)
 		else
 			self:SetFrozenVanilla(loc, frozen)
 		end
@@ -599,7 +606,7 @@ function SetBoard(board)
 			end
 		end
 		
-		CUtils.SetUserdataMetatable(board, board_metatable)
+		cutils.Misc.SetUserdataMetatable(board, board_metatable)
 	end
 	
 	oldSetBoard(board)
