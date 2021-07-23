@@ -1,4 +1,9 @@
 
+local MODES = {
+	init = { "initialize", "Initializing", "Initialized" },
+	load = { "load", "Loading", "Loaded" }
+}
+
 local function isDirectory(path)
 	return path:find("[\\/]$")
 end
@@ -31,9 +36,7 @@ local function runScripts(parentPath, scripts, fn, ...)
 			if modApi:directoryExists(path) then
 				runScripts(path, mod_loader:enumerateFilesIn(path), fn, ...)
 			else
-				if modApi.developmentMode then
-					LOGF("Failed to %s %q: Directory does not exist", fn, path)
-				end
+				LOGD("Failed to %s %q: Directory does not exist", fn, path)
 			end
 			
 		else
@@ -48,12 +51,12 @@ local function runScripts(parentPath, scripts, fn, ...)
 					local component = require(name)
 					
 					if fn and type(component) == 'table' and type(component[fn]) == 'function' then
+						LOGD(MODES[fn][2].." "..name.." ...")
 						component[fn](component, ...)
+						LOGD(MODES[fn][3].." "..name.." successfully!")
 					end
 				else
-					if modApi.developmentMode then
-						LOGF("Failed to %s %q: File does not exist", fn, path)
-					end
+					LOGD("Failed to %s %q: File does not exist", MODES[fn][1], path)
 				end
 			end
 		end
