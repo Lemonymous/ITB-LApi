@@ -374,10 +374,6 @@ BoardClassEx.IsHighlighted = function(self, loc)
 		{ "userdata|GameBoard&", "userdata|Point" }
 	}
 	
-	if loc.x < 0 or loc.x > 7 or loc.y < 0 or loc.y > 7 then
-		return false
-	end
-	
 	return cutils.Board.IsHighlighted(loc)
 end
 
