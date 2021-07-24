@@ -460,15 +460,15 @@ function InitializeBoardClass(board)
 			
 		else
 			-- unfreeze terrain if new terrain can not be frozen.
-			local isFreezeableTerrain = iTerrain == TERRAIN_BUILDING or iTerrain == TERRAIN_MOUNTAIN
+			-- local isFreezeableTerrain = iTerrain == TERRAIN_BUILDING or iTerrain == TERRAIN_MOUNTAIN
 			
 			-- terrain with 0 health cannot be frozen.
 			local terrainHealth = self:GetHealth(loc)
-			isFreezeableTerrain = isFreezeableTerrain and terrainHealth > 0
+			-- isFreezeableTerrain = isFreezeableTerrain and terrainHealth > 0
 			
-			if Board:IsFrozen(loc) and not isFreezeableTerrain then
-				Board:SetFrozen(loc, false, true)
-			end
+			-- if Board:IsFrozen(loc) and not isFreezeableTerrain then
+				-- Board:SetFrozen(loc, false, true)
+			-- end
 			
 			self:SetTerrainVanilla(loc, iTerrain)
 			
