@@ -1,6 +1,9 @@
 
 local cutils = LApi.cutils:get()
 
+PATH_JUMPER = 6
+PATH_TELEPORTER = 5
+
 TERRAIN_ICE_CRACKED = -1
 TERRAIN_MOUNTAIN_CRACKED = -2
 TERRAIN_FOREST_FIRE = -3
@@ -416,6 +419,33 @@ end
 
 function InitializeBoardClass(board)
 	-- modify existing board functions here
+	
+	BoardClassEx.GetReachableVanilla = board.GetReachable
+	BoardClassEx.GetReachable = function(self, loc, movespeed, pathing)
+		local reachable = self:GetReachableVanilla(loc, movespeed, pathing)
+		
+		if pathing % 16 == PATH_JUMPER or pathing % 16 == PATH_TELEPORTER then
+			local size = reachable:size()
+			local massive = Pawn:IsMassive()
+			local flying = Pawn:IsFlying()
+			
+			for i = size, 1, -1 do
+				local p = reachable:index(i)
+				local terrain = self:GetTerrain(p)
+				if terrain == TERRAIN_HOLE then
+					if not flying then
+						reachable:erase(i)
+					end
+				elseif terrain == TERRAIN_WATER then
+					if not massive and not flying then
+						reachable:erase(i)
+					end
+				end
+			end
+		end
+		
+		return reachable
+	end
 	
 	BoardClassEx.SetLavaVanilla = board.SetLava
 	BoardClassEx.SetLava = function(self, loc, lava, sink)
