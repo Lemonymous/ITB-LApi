@@ -64,9 +64,9 @@ end
 
 local scripts = {}
 
-function scripts:init(parentPath, scripts)
+function scripts:init(parentPath, scripts, ...)
 	if parentPath == nil then return end
-	runScripts(parentPath, scripts, 'init')
+	runScripts(parentPath, scripts, 'init', ...)
 end
 
 function scripts:load(parentPath, scripts, ...)
