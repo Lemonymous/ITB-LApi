@@ -4,8 +4,8 @@ local cutils = LApi.cutils:get()
 BoardPawn.ClearUndoMove = function(self)
 	Assert.Equals("userdata", type(self), "Argument #0")
 	
-	cutils.Pawn:SetUndoX(self, -1)
-	cutils.Pawn:SetUndoY(self, -1)
+	cutils.Pawn.SetUndoX(self, -1)
+	cutils.Pawn.SetUndoY(self, -1)
 end
 
 BoardPawn.SetUndoLoc = function(self, loc)
@@ -16,8 +16,8 @@ BoardPawn.SetUndoLoc = function(self, loc)
 		{ "userdata|BoardPawn&", "userdata|Point" },
 	}
 	
-	cutils.Pawn:SetUndoX(self, loc.x)
-	cutils.Pawn:SetUndoY(self, loc.y)
+	cutils.Pawn.SetUndoX(self, loc.x)
+	cutils.Pawn.SetUndoY(self, loc.y)
 end
 
 BoardPawn.GetUndoLoc = function(self)
@@ -29,8 +29,8 @@ BoardPawn.GetUndoLoc = function(self)
 	}
 	
 	return Point(
-		cutils.Pawn:GetUndoX(self),
-		cutils.Pawn:GetUndoY(self)
+		cutils.Pawn.GetUndoX(self),
+		cutils.Pawn.GetUndoY(self)
 	)
 end
 
