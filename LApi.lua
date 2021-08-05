@@ -12,6 +12,7 @@ local tests = {
 }
 local modules = {
 	"scripts",
+	"library",
 	"cutils",
 	"worldConstants",
 	"astar",
