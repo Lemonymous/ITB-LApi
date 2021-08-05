@@ -275,11 +275,15 @@ BoardPawn.SetBaseMaxHealth = function(self, hp_max_base)
 end
 
 local function isPowered(powerTable)
-	return powerTable == nil or powerTable[1] ~= 0
+	if powerTable == nil then
+		return false
+	end
+
+	return powerTable[1] ~= 0
 end
 
 local function getPoweredWeapon(ptable, weapon)
-	if not isPowered(ptable[weapon.."_power"]) then
+	if not isPowered(ptable[weapon.."_power"] or {1}) then
 		return nil
 	end
 
