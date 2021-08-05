@@ -31,14 +31,7 @@ local function onModsInitialized()
 end
 
 local function onModsLoaded()
-	if VERSION < LApi.version then
-		return
-	end
-
-	if LApi.loaded then
-		return
-	end
-
+	LApi.loaded = nil
 	LApi:finalizeLoad()
 	LApi.loaded = true
 end
@@ -52,17 +45,14 @@ if LApi == nil or modApi:isVersion(VERSION, LApi.version) then
 	function LApi:finalizeInit()
 		self.scripts:init(path.."modules/", modules)
 		self.scripts:init(path.."extensions/", extensions)
+
+		modApi:addModsLoadedHook(onModsLoaded)
 	end
 
 	function LApi:finalizeLoad()
 		self.scripts:load(path.."modules/", modules)
 		self.scripts:load(path.."extensions/", extensions)
 		self.scripts:load(path.."tests/", tests)
-	end
-
-	function LApi:load()
-		self.loaded = false
-		modApi:addModsLoadedHook(onModsLoaded)
 	end
 
 	-- give all modules new metatables in order to redirect all function calls
