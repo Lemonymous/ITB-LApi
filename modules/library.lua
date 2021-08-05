@@ -1,9 +1,9 @@
 
 local searchLocations = {
-	"lib/",
 	"libs/",
-	"library/",
+	"lib/",
 	"libraries/",
+	"library/",
 	""
 }
 
