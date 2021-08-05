@@ -274,6 +274,133 @@ BoardPawn.SetBaseMaxHealth = function(self, hp_max_base)
 	cutils.Pawn.SetBaseMaxHealth(self, hp_max_base)
 end
 
+local function isPowered(powerTable)
+	return powerTable == nil or powerTable[1] ~= 0
+end
+
+local function getPoweredWeapon(ptable, weapon)
+	if not isPowered(ptable[weapon.."_power"]) then
+		return nil
+	end
+
+	local result = ptable[weapon]
+
+	if result == nil then
+		return nil
+	end
+
+	local upgrade = ""
+	if isPowered(ptable[weapon.."_mod1"]) then
+		upgrade = upgrade.."A"
+	end
+	if isPowered(ptable[weapon.."_mod2"]) then
+		upgrade = upgrade.."B"
+	end
+	if upgrade:len() > 0 then
+		result = result.."_"..upgrade
+	end
+
+	return result
+end
+
+local function weaponBase(weapon)
+	return weapon:match("^(.-)_?A?B?$")
+end
+
+local function weaponSuffix(weapon)
+	return weapon:match("_(A?B?)$")
+end
+
+-- returns true if `weapon` is the same
+-- or a lower version of `compareWeapon`
+local function isDescendantOfWeapon(weapon, compareWeapon)
+	if compareWeapon == nil then
+		return false
+	end
+
+	local baseWeapon = weaponBase(weapon)
+	local baseCompare = weaponBase(compareWeapon)
+
+	if baseWeapon ~= baseCompare then
+		return false
+	end
+
+	local suffixWeapon = weaponSuffix(weapon)
+	local suffixCompare = weaponSuffix(compareWeapon)
+
+	if suffixWeapon == nil then
+		return true
+	elseif suffixCompare == nil then
+		return false
+	end
+
+	return suffixCompare:find(suffixWeapon) and true or false
+end
+
+BoardPawn.GetEquippedWeapons = function(self)
+	Assert.Signature{
+		ret = "table",
+		func = "GetEquippedWeapons",
+		params = { self },
+		{ "userdata|BoardPawn&" }
+	}
+
+	local ptable = self:GetPawnTable()
+
+	return {
+		ptable.primary,
+		ptable.secondary
+	}
+end
+
+BoardPawn.GetPoweredWeapons = function(self)
+	Assert.Signature{
+		ret = "table",
+		func = "GetPoweredWeapons",
+		params = { self },
+		{ "userdata|BoardPawn&" }
+	}
+
+	local ptable = self:GetPawnTable()
+	local result = {}
+
+	result[#result+1] = getPoweredWeapon(ptable, "primary")
+	result[#result+1] = getPoweredWeapon(ptable, "secondary")
+
+	return result
+end
+
+BoardPawn.IsWeaponEquipped = function(self, baseWeapon)
+	Assert.Signature{
+		ret = "bool",
+		func = "IsWeaponEquipped",
+		params = { self, baseWeapon },
+		{ "userdata|BoardPawn&", "string|string" }
+	}
+
+	local ptable = self:GetPawnTable()
+
+	return
+		baseWeapon == ptable.primary or
+		baseWeapon == ptable.secondary
+end
+
+BoardPawn.IsWeaponPowered = function(self, weapon)
+	Assert.Signature{
+		ret = "bool",
+		func = "IsWeaponPowered",
+		params = { self, weapon },
+		{ "userdata|BoardPawn&", "string|string" }
+	}
+
+	local ptable = self:GetPawnTable()
+	local poweredWeapons = self:GetPoweredWeapons()
+
+	return
+		isDescendantOfWeapon(weapon, poweredWeapons[1]) or
+		isDescendantOfWeapon(weapon, poweredWeapons[2])
+end
+
 
 local modloaderInitializeBoardPawn = InitializeBoardPawn
 function InitializeBoardPawn()
