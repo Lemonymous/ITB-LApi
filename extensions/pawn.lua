@@ -405,6 +405,30 @@ BoardPawn.IsWeaponPowered = function(self, weapon)
 		isDescendantOfWeapon(weapon, poweredWeapons[2])
 end
 
+BoardPawn.GetArmedWeapon = function(self)
+	Assert.Signature{
+		ret = "string",
+		func = "GetArmedWeapon",
+		params = { self },
+		{ "userdata|BoardPawn&" }
+	}
+
+	local ptable = self:GetPawnTable()
+	local armedWeaponId = self:GetArmedWeaponId()
+
+	if armedWeaponId == 0 then
+		return "Move"
+	elseif armedWeaponId == 1 then
+		return getPoweredWeapon(ptable, "primary")
+	elseif armedWeaponId == 2 then
+		return getPoweredWeapon(ptable, "secondary")
+	elseif armedWeaponId == 50 then
+		return "Skill_Repair"
+	end
+
+	return nil
+end
+
 
 local modloaderInitializeBoardPawn = InitializeBoardPawn
 function InitializeBoardPawn()
