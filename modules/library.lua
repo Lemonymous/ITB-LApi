@@ -1,4 +1,5 @@
 
+local LOG_PATH_LEN_MAX = 55
 local searchLocations = {
 	"libs/",
 	"lib/",
@@ -30,33 +31,33 @@ local function fetchlib(lib_id, mod, searchingMod)
 	end
 
 	if lib == nil then
-		LOGDF("Mod %s (%s) searching for library '%s' in mod %s (%s)...",
-			searchingMod.name,
+		LOGDF("[%s] Scan for lib '%s.lua' in [%s] ...",
 			searchingMod.id,
 			lib_id,
-			mod.name,
 			mod.id
 		)
 		for _, subpath in ipairs(searchLocations) do
 			local libraryPath = mod.scriptPath..subpath..lib_id
-			LOGDF("Searching for %s.lua...", libraryPath)
+			local libraryPathLog = libraryPath
+			if libraryPath:len() > LOG_PATH_LEN_MAX then
+				libraryPathLog = "..."..libraryPathLog:sub(3-LOG_PATH_LEN_MAX, -1)
+			end
 			if modApi:fileExists(libraryPath..".lua") then
+				LOGDF("[%s] Found '%s.lua' ...",
+					searchingMod.id,
+					libraryPathLog
+				)
 				lib, err = prequire(libraryPath)
 				if lib then
-					LOGDF("Mod %s (%s) successully found library '%s': %s.lua",
-						searchingMod.name,
+					LOGDF("[%s] File read successfully!",
 						searchingMod.id,
-						lib_id,
-						libraryPath
+						lib_id
 					)
 
 					break
 				else
-					LOGDF("ERROR: Mod %s (%s) FAILED to read library '%s': %s.lua.\n%s",
-						searchingMod.name,
+					LOGDF("\n[%s] ERROR: File could not be read!\n\n%s\n",
 						searchingMod.id,
-						lib_id,
-						libraryPath,
 						err
 					)
 				end
@@ -91,8 +92,7 @@ function library:fetch(lib_id, mod_id)
 	end
 
 	if lib == nil then
-		error(string.format("Mod %s (%s) could not find library '%s'",
-			mod.name,
+		error(string.format("[%s] ERROR: lib '%s.lua' not found!",
 			mod_id,
 			lib_id
 		))
