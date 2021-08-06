@@ -52,7 +52,7 @@ local function fetchlib(lib_id, mod, searchingMod)
 
 					break
 				else
-					LOGDF("Mod %s (%s) failed to read library '%s': %s.lua.\n%s",
+					LOGDF("ERROR: Mod %s (%s) FAILED to read library '%s': %s.lua.\n%s",
 						searchingMod.name,
 						searchingMod.id,
 						lib_id,
