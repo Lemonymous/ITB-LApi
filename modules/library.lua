@@ -18,7 +18,15 @@ local function prequire(m)
 	return err
 end
 
-local function fetchlib(lib_id, mod, searchingMod)
+local function ploadfile(m)
+	local _, func, err = pcall(loadfile, m..".lua")
+	if not func then return nil, err end
+	local ok, err = pcall(func)
+	if not ok then return nil, err end
+	return err
+end
+
+local function fetchlib(lib_id, mod, searchingMod, newInstance)
 	local lib
 
 	if searchingMod == nil then
@@ -27,7 +35,7 @@ local function fetchlib(lib_id, mod, searchingMod)
 
 	if mod.parent then
 		local parentMod = mod_loader.mods[mod.parent]
-		lib = fetchlib(lib_id, parentMod, searchingMod)
+		lib = fetchlib(lib_id, parentMod, searchingMod, newInstance)
 	end
 
 	if lib == nil then
@@ -47,7 +55,12 @@ local function fetchlib(lib_id, mod, searchingMod)
 					searchingMod.id,
 					libraryPathLog
 				)
-				lib, err = prequire(libraryPath)
+				local err
+				if newInstance then
+					lib, err = ploadfile(libraryPath)
+				else
+					lib, err = prequire(libraryPath)
+				end
 				if lib then
 					LOGDF("[%s] File read successfully!",
 						searchingMod.id,
@@ -68,7 +81,17 @@ local function fetchlib(lib_id, mod, searchingMod)
 	return lib
 end
 
-function library:fetch(lib_id, mod_id)
+-- For libraries that are not meant to be shared between
+-- mods, this method can be used to create a unique
+-- instance of the library, only accessable by your mod.
+-- Further calls to library.fetch will grab this instance.
+-- library.new can be called again to create a new
+-- instance.
+function library:new(lib_id, mod_id)
+	self:fetch(lib_id, mod_id, newInstance)
+end
+
+function library:fetch(lib_id, mod_id, newInstance)
 	Assert.Equals('string', type(lib_id), "Argument #1")
 	Assert.Equals({'nil', 'string'}, type(mod_id), "Argument #2")
 
@@ -77,16 +100,16 @@ function library:fetch(lib_id, mod_id)
 		mod_id = modApi.currentMod
 	end
 
-	local mod = mod_loader.mods[mod_id]
-
 	if self.mods[mod_id] == nil then
 		self.mods[mod_id] = {}
 	end
 
+	lib_id = lib_id:gsub(".lua$", "")
+	local mod = mod_loader.mods[mod_id]
 	local lib = self.mods[mod_id][lib_id]
 
-	if lib == nil then
-		lib = fetchlib(lib_id, mod, nil)
+	if newInstance or lib == nil then
+		lib = fetchlib(lib_id, mod, nil, newInstance)
 
 		self.mods[mod_id][lib_id] = lib
 	end
@@ -100,5 +123,7 @@ function library:fetch(lib_id, mod_id)
 
 	return lib
 end
+
+library.get = library.fetch
 
 return library
