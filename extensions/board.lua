@@ -415,6 +415,17 @@ BoardClassEx.IsTipImage = function(self)
 	return not cutils.Board.IsGameboard()
 end
 
+BoardClassEx.GetTerrainIcon = function(self, loc)
+	Assert.Signature{
+		ret = "string",
+		func = "GetTerrainIcon",
+		params = { self, loc },
+		{ "userdata|GameBoard&", "userdata|Point" }
+	}
+
+	return cutils.Board.GetTerrainIcon(loc)
+end
+
 
 
 function InitializeBoardClass(board)
