@@ -26,7 +26,7 @@ local function ploadfile(m)
 	return err
 end
 
-local function fetchlib(lib_id, mod, searchingMod, newInstance)
+local function fetchlib(lib_id, mod, searchingMod, addedFolders, newInstance)
 	local lib
 
 	if searchingMod == nil then
@@ -35,7 +35,7 @@ local function fetchlib(lib_id, mod, searchingMod, newInstance)
 
 	if mod.parent then
 		local parentMod = mod_loader.mods[mod.parent]
-		lib = fetchlib(lib_id, parentMod, searchingMod, newInstance)
+		lib = fetchlib(lib_id, parentMod, searchingMod, addedFolders, newInstance)
 	end
 
 	if lib == nil then
@@ -44,23 +44,44 @@ local function fetchlib(lib_id, mod, searchingMod, newInstance)
 			lib_id,
 			mod.id
 		)
-		for _, subpath in ipairs(searchLocations) do
-			local libraryPath = mod.scriptPath..subpath..lib_id
-			local libraryPathLog = libraryPath
-			if libraryPath:len() > LOG_PATH_LEN_MAX then
-				libraryPathLog = "..."..libraryPathLog:sub(3-LOG_PATH_LEN_MAX, -1)
+
+		local folders = searchLocations
+		if addedFolders then
+			folders = add_arrays(addedFolders, folders)
+		end
+
+		for _, folder in ipairs(folders) do
+			local libraryPath = mod.scriptPath..folder..lib_id
+			local libraryFileLog = libraryPath
+			local libraryFolderLog = mod.scriptPath..folder
+
+			if libraryFileLog:len() > LOG_PATH_LEN_MAX then
+				libraryFileLog = "..."..libraryFileLog:sub(3-LOG_PATH_LEN_MAX, -1)
 			end
+
+			if libraryFolderLog:len() > LOG_PATH_LEN_MAX then
+				libraryFolderLog = "..."..libraryFolderLog:sub(3-LOG_PATH_LEN_MAX, -1)
+			end
+
+			LOGDF("[%s] Search '%s' ...",
+				searchingMod.id,
+				libraryFolderLog
+			)
+
 			if modApi:fileExists(libraryPath..".lua") then
+
 				LOGDF("[%s] Found '%s.lua' ...",
 					searchingMod.id,
-					libraryPathLog
+					libraryFileLog
 				)
+
 				local err
 				if newInstance then
 					lib, err = ploadfile(libraryPath)
 				else
 					lib, err = prequire(libraryPath)
 				end
+
 				if lib then
 					LOGDF("[%s] File read successfully!",
 						searchingMod.id,
@@ -91,9 +112,10 @@ function library:new(lib_id, mod_id)
 	self:fetch(lib_id, mod_id, newInstance)
 end
 
-function library:fetch(lib_id, mod_id, newInstance)
+function library:fetch(lib_id, mod_id, additionalFolders, newInstance)
 	Assert.Equals('string', type(lib_id), "Argument #1")
 	Assert.Equals({'nil', 'string'}, type(mod_id), "Argument #2")
+	Assert.Equals({'nil', 'string', 'table'}, type(additionalFolders), "Argument #3")
 
 	if mod_id == nil then
 		Assert.ModInitializingOrLoading("Fetch library")
@@ -104,12 +126,24 @@ function library:fetch(lib_id, mod_id, newInstance)
 		self.mods[mod_id] = {}
 	end
 
+	if additionalFolders then
+		if type(additionalFolders) == 'string' then
+			additionalFolders = { additionalFolders }
+		end
+
+		for i, folder in ipairs(additionalFolders) do
+			if not folder:find("/$") then
+				additionalFolders[i] = folder.."/"
+			end
+		end
+	end
+
 	lib_id = lib_id:gsub(".lua$", "")
 	local mod = mod_loader.mods[mod_id]
 	local lib = self.mods[mod_id][lib_id]
 
 	if newInstance or lib == nil then
-		lib = fetchlib(lib_id, mod, nil, newInstance)
+		lib = fetchlib(lib_id, mod, nil, additionalFolders, newInstance)
 
 		self.mods[mod_id][lib_id] = lib
 	end
