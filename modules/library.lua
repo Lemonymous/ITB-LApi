@@ -1,5 +1,6 @@
 
 local LOG_PATH_LEN_MAX = 55
+local depth = ""
 local searchLocations = {
 	"libs/",
 	"lib/",
@@ -39,7 +40,8 @@ local function fetchlib(lib_id, mod, searchingMod, addedFolders, newInstance)
 	end
 
 	if lib == nil then
-		LOGDF("[%s] Scan for lib '%s.lua' in [%s] ...",
+		LOGDF("%s[%s] Search for lib '%s.lua' in [%s]",
+			depth,
 			searchingMod.id,
 			lib_id,
 			mod.id
@@ -63,35 +65,41 @@ local function fetchlib(lib_id, mod, searchingMod, addedFolders, newInstance)
 				libraryFolderLog = "..."..libraryFolderLog:sub(3-LOG_PATH_LEN_MAX, -1)
 			end
 
-			LOGDF("[%s] Search '%s' ...",
-				searchingMod.id,
+			LOGDF("%s... Search '%s'",
+				depth,
 				libraryFolderLog
 			)
 
 			if modApi:fileExists(libraryPath..".lua") then
 
-				LOGDF("[%s] Found '%s.lua' ...",
+				LOGDF("%s[%s] Opening '%s.lua' ...",
+					depth,
 					searchingMod.id,
 					libraryFileLog
 				)
 
 				local err
+				depth = depth.."    "
 				if newInstance then
 					lib, err = ploadfile(libraryPath)
 				else
 					lib, err = prequire(libraryPath)
 				end
+				depth = depth:sub(1,-5)
 
 				if lib then
-					LOGDF("[%s] File read successfully!",
+					LOGDF("%s[%s] Successfully read '%s.lua'!",
+						depth,
 						searchingMod.id,
 						lib_id
 					)
 
 					break
 				else
-					LOGDF("\n[%s] ERROR: File could not be read!\n\n%s\n",
+					LOGDF("%s[%s] ERROR: could not read '%s.lua'!\n\n%s\n",
+						depth,
 						searchingMod.id,
+						lib_id,
 						err
 					)
 				end
@@ -149,10 +157,13 @@ function library:fetch(lib_id, mod_id, additionalFolders, newInstance)
 	end
 
 	if lib == nil then
-		error(string.format("[%s] ERROR: lib '%s.lua' not found!",
+		local err = string.format("[%s] ERROR: working lib '%s.lua' not found!",
 			mod_id,
 			lib_id
-		))
+		)
+
+		LOGDF(depth..err)
+		error(err)
 	end
 
 	return lib
