@@ -459,7 +459,7 @@ function InitializeBoardPawn()
 	-- not sure if it is possible to use this in any safe way,
 	-- but leaving it here because the ability to swap out mechs
 	-- could potentially lead to some very cool mods.
-	local oldSetMech = pawn.SetMech
+	BoardPawn.SetMechVanilla = pawn.SetMech
 	BoardPawn.SetMech = function(self, isMech)
 		Assert.Signature{
 			ret = "void",
@@ -472,7 +472,7 @@ function InitializeBoardPawn()
 		if isMech == false then
 			cutils.Pawn.SetMech(self, isMech)
 		elseif getMechCount() < 3 then
-			oldSetMech(self)
+			self:SetMechVanilla()
 		end
 	end
 	
@@ -501,32 +501,32 @@ function InitializeBoardPawn()
 	end
 	
 	-- extend vanilla function to apply status without animation
-	local oldSetFrozen = pawn.SetFrozen
+	BoardPawn.SetFrozenVanilla = pawn.SetFrozen
 	BoardPawn.SetFrozen = function(self, frozen, no_animation)
 		if no_animation then
 			return cutils.Pawn.SetFrozen(self, frozen)
 		end
 		
-		return oldSetFrozen(self, frozen)
+		return self:SetFrozenVanilla(self, frozen)
 	end
 	
 	-- extend vanilla function to apply status without animation
-	local oldSetShield = pawn.SetShield
+	BoardPawn.SetShieldVanilla = pawn.SetShield
 	BoardPawn.SetShield = function(self, shield, no_animation)
 		if no_animation then
 			return cutils.Pawn.SetShield(self, shield)
 		end
 		
-		return oldSetShield(self, shield)
+		return self:SetShieldVanilla(shield)
 	end
 	
 	-- extend vanilla function to apply status without animation
-	local oldSetAcid = pawn.SetAcid
+	BoardPawn.SetAcidVanilla = pawn.SetAcid
 	BoardPawn.SetAcid = function(self, acid, no_animation)
 		if no_animation then
 			return cutils.Pawn.SetAcid(self, acid)
 		end
 		
-		return oldSetAcid(self, acid)
+		return self:SetAcidVanilla(acid)
 	end
 end
