@@ -320,7 +320,8 @@ BoardClassEx.SetSnow = function(self, loc, snow)
 		ret = "void",
 		func = "SetSnow",
 		params = { self, loc, snow },
-		{ "userdata|GameBoard&", "userdata|Point", "boolean|bool" }
+		{ "userdata|GameBoard&", "userdata|Point", "boolean|bool" },
+		{ "userdata|GameBoard&", "userdata|Point" }
 	}
 	
 	if snow == nil then
