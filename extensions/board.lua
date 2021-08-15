@@ -37,6 +37,28 @@ BoardClassEx.IsShield = function(self, loc)
 	return cutils.Board.IsShield(loc)
 end
 
+BoardClassEx.IsForest = function(self, loc)
+	Assert.Signature{
+		ret = "bool",
+		func = "IsForest",
+		params = { self, loc },
+		{ "userdata|GameBoard&", "userdata|Point" }
+	}
+
+	return self:IsTerrainVanilla(loc, TERRAIN_FOREST) or self:IsForestFire(loc)
+end
+
+BoardClassEx.IsForestFire = function(self, loc)
+	Assert.Signature{
+		ret = "bool",
+		func = "IsForestFire",
+		params = { self, loc },
+		{ "userdata|GameBoard&", "userdata|Point" }
+	}
+
+	return cutils.Board.GetFireType(loc) == 2
+end
+
 BoardClassEx.SetShield = function(self, loc, shield, no_animation)
 	Assert.Signature{
 		ret = "void",
