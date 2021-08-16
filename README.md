@@ -2,23 +2,15 @@
  LApi is a mod loader extender for Into the Breach, intended to add functionality for mods - mainly via memory manipulation. It will add or alter existing functions for Pawn and Board, among other things.
 
 # How to use
- In order to add the functions to your mod, all you need to do is to drop the `LApi` folder into your `scripts` folder, and then `initialize` and `load` it in your `init.lua`.
-
- Correct folder structure should look like this: `../Into the Breach/mods/[my mod]/scripts/LApi/`
+ In order to add the functions, all you need to do is to drop the LApi folder into your mod, and use `require` on the file `LApi.lua`.
 
 &nbsp;
 
- This is an example of how to load the api in your `init.lua`:
+For example if you place LApi into `../Into the Breach/mods/[my mod]/scripts/ITB-LApi/`, then your mod's `init.lua` should look like this:
 ```lua
 local function init(self)
-	require(self.scriptPath .."LApi/LApi"):init()
-end
-
-local function load(self, options, version)
-    require(self.scriptPath .."LApi/LApi"):load()
+    require(self.scriptPath .."ITB-LApi/LApi")
 end
 ```
 
 &nbsp;
-
-This is a work in progress. Function list will come later.
