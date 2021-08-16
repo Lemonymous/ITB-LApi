@@ -9,9 +9,7 @@ local searchLocations = {
 	""
 }
 
-local library = {
-	mods = {}
-}
+local library = {}
 
 local function prequire(m)
 	local ok, err = pcall(require, m)
@@ -128,6 +126,10 @@ function library:fetch(lib_id, mod_id, additionalFolders, newInstance)
 	if mod_id == nil then
 		Assert.ModInitializingOrLoading("Fetch library")
 		mod_id = modApi.currentMod
+	end
+
+	if self.mods == nil then
+		self.mods = {}
 	end
 
 	if self.mods[mod_id] == nil then
