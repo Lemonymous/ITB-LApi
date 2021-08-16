@@ -59,13 +59,7 @@ if LApi == nil or not modApi:isVersion(VERSION, LApi.version) then
 	for _, moduleId in ipairs(modules) do
 		LApi[moduleId] = LApi[moduleId] or {}
 		local module = require(path.."modules/"..moduleId)
-		local metatable = {}
-		local oldMetatable = getmetatable(module) or {}
-		for i, v in pairs(oldMetatable) do
-			if i:find("^__") then
-				metatable[i] = v
-			end
-		end
+		local metatable = getmetatable(module) or {}
 		rawset(metatable, "__index", module)
 		setmetatable(LApi[moduleId], metatable)
 	end
