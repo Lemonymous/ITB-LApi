@@ -37,7 +37,7 @@ end
 
 modApi:addModsInitializedHook(onModsInitialized)
 
-if LApi == nil or modApi:isVersion(VERSION, LApi.version) then
+if LApi == nil or not modApi:isVersion(VERSION, LApi.version) then
 	LApi = LApi or {}
 	LApi.version = VERSION
 
