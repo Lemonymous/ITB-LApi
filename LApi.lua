@@ -5,6 +5,7 @@ local extensions = {
 	"assert",
 	"board",
 	"pawn",
+	"game",
 }
 local tests = {
 	"board",
