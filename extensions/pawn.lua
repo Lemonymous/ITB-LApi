@@ -507,7 +507,7 @@ function InitializeBoardPawn()
 			return cutils.Pawn.SetFrozen(self, frozen)
 		end
 		
-		return self:SetFrozenVanilla(self, frozen)
+		return self:SetFrozenVanilla(frozen)
 	end
 	
 	-- extend vanilla function to apply status without animation
