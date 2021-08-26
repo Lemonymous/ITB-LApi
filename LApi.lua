@@ -1,6 +1,6 @@
 
 local path = GetParentPath(...)
-local VERSION = "0.2.2"
+local VERSION = "0.2.3"
 local extensions = {
 	"assert",
 	"board",
