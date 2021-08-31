@@ -429,6 +429,44 @@ BoardPawn.GetArmedWeapon = function(self)
 	return nil
 end
 
+BoardPawn.GetQueuedWeaponId = function(self)
+	Assert.Signature{
+		ret = "string",
+		func = "GetQueuedWeaponId",
+		params = { self },
+		{ "userdata|BoardPawn&" }
+	}
+
+	local ptable = self:GetPawnTable()
+	local queued = self:GetQueued()
+
+	return queued and queued.iQueuedSkill or -1
+end
+
+BoardPawn.GetQueuedWeapon = function(self)
+	Assert.Signature{
+		ret = "string",
+		func = "GetQueuedWeapon",
+		params = { self },
+		{ "userdata|BoardPawn&" }
+	}
+
+	local ptable = self:GetPawnTable()
+	local queuedWeaponId = self:GetQueuedWeaponId()
+
+	if queuedWeaponId == 0 then
+		return "Move"
+	elseif queuedWeaponId == 1 then
+		return getPoweredWeapon(ptable, "primary")
+	elseif queuedWeaponId == 2 then
+		return getPoweredWeapon(ptable, "secondary")
+	elseif queuedWeaponId == 50 then
+		return "Skill_Repair"
+	end
+
+	return nil
+end
+
 
 local modloaderInitializeBoardPawn = InitializeBoardPawn
 function InitializeBoardPawn()
