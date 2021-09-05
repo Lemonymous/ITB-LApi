@@ -274,39 +274,6 @@ BoardPawn.SetBaseMaxHealth = function(self, hp_max_base)
 	cutils.Pawn.SetBaseMaxHealth(self, hp_max_base)
 end
 
-local function isPowered(powerTable)
-	if powerTable == nil then
-		return false
-	end
-
-	return powerTable[1] ~= 0
-end
-
-local function getPoweredWeapon(ptable, weapon)
-	if not isPowered(ptable[weapon.."_power"] or {1}) then
-		return nil
-	end
-
-	local result = ptable[weapon]
-
-	if result == nil then
-		return nil
-	end
-
-	local upgrade = ""
-	if isPowered(ptable[weapon.."_mod1"]) then
-		upgrade = upgrade.."A"
-	end
-	if isPowered(ptable[weapon.."_mod2"]) then
-		upgrade = upgrade.."B"
-	end
-	if upgrade:len() > 0 then
-		result = result.."_"..upgrade
-	end
-
-	return result
-end
-
 local function weaponBase(weapon)
 	return weapon:match("^(.-)_?A?B?$")
 end
@@ -349,12 +316,14 @@ BoardPawn.GetEquippedWeapons = function(self)
 		{ "userdata|BoardPawn&" }
 	}
 
-	local ptable = self:GetPawnTable()
+	local weaponCount = cutils.Pawn.GetWeaponCount(self) - 1
+	local weapons = {}
 
-	return {
-		ptable.primary,
-		ptable.secondary
-	}
+	for i = 1, weaponCount do
+		weapons[i] = cutils.Pawn.GetWeapon(self, i)
+	end
+
+	return weapons
 end
 
 BoardPawn.GetPoweredWeapons = function(self)
@@ -365,13 +334,14 @@ BoardPawn.GetPoweredWeapons = function(self)
 		{ "userdata|BoardPawn&" }
 	}
 
-	local ptable = self:GetPawnTable()
-	local result = {}
+	local weaponCount = cutils.Pawn.GetWeaponCount(self) - 1
+	local weapons = {}
 
-	result[#result+1] = getPoweredWeapon(ptable, "primary")
-	result[#result+1] = getPoweredWeapon(ptable, "secondary")
+	for i = 1, weaponCount do
+		weapons[i] = cutils.Pawn.GetPoweredWeapon(self, i)
+	end
 
-	return result
+	return weapons
 end
 
 BoardPawn.IsWeaponEquipped = function(self, baseWeapon)
@@ -382,11 +352,15 @@ BoardPawn.IsWeaponEquipped = function(self, baseWeapon)
 		{ "userdata|BoardPawn&", "string|string" }
 	}
 
-	local ptable = self:GetPawnTable()
+	local weaponCount = cutils.Pawn.GetWeaponCount(self) - 1
 
-	return
-		baseWeapon == ptable.primary or
-		baseWeapon == ptable.secondary
+	for i = 1, weaponCount do
+		if baseWeapon == cutils.Pawn.GetWeapon(self, i) then
+			return true
+		end
+	end
+
+	return false
 end
 
 BoardPawn.IsWeaponPowered = function(self, weapon)
@@ -397,12 +371,15 @@ BoardPawn.IsWeaponPowered = function(self, weapon)
 		{ "userdata|BoardPawn&", "string|string" }
 	}
 
-	local ptable = self:GetPawnTable()
-	local poweredWeapons = self:GetPoweredWeapons()
+	local weaponCount = cutils.Pawn.GetWeaponCount(self) - 1
 
-	return
-		isDescendantOfWeapon(weapon, poweredWeapons[1]) or
-		isDescendantOfWeapon(weapon, poweredWeapons[2])
+	for i = 1, weaponCount do
+		if isDescendantOfWeapon(weapon, cutils.Pawn.GetPoweredWeapon(self, i)) then
+			return true
+		end
+	end
+
+	return false
 end
 
 BoardPawn.GetArmedWeapon = function(self)
@@ -415,15 +392,14 @@ BoardPawn.GetArmedWeapon = function(self)
 
 	local ptable = self:GetPawnTable()
 	local armedWeaponId = self:GetArmedWeaponId()
+	local poweredWeapons = self:GetPoweredWeapons()
 
 	if armedWeaponId == 0 then
 		return "Move"
-	elseif armedWeaponId == 1 then
-		return getPoweredWeapon(ptable, "primary")
-	elseif armedWeaponId == 2 then
-		return getPoweredWeapon(ptable, "secondary")
 	elseif armedWeaponId == 50 then
 		return "Skill_Repair"
+	else
+		return poweredWeapons[armedWeaponId]
 	end
 
 	return nil
@@ -437,10 +413,7 @@ BoardPawn.GetQueuedWeaponId = function(self)
 		{ "userdata|BoardPawn&" }
 	}
 
-	local ptable = self:GetPawnTable()
-	local queued = self:GetQueued()
-
-	return queued and queued.iQueuedSkill or -1
+	return cutils.Pawn.GetQueuedWeaponId(self)
 end
 
 BoardPawn.GetQueuedWeapon = function(self)
@@ -453,15 +426,14 @@ BoardPawn.GetQueuedWeapon = function(self)
 
 	local ptable = self:GetPawnTable()
 	local queuedWeaponId = self:GetQueuedWeaponId()
+	local poweredWeapons = self:GetPoweredWeapons()
 
 	if queuedWeaponId == 0 then
 		return "Move"
-	elseif queuedWeaponId == 1 then
-		return getPoweredWeapon(ptable, "primary")
-	elseif queuedWeaponId == 2 then
-		return getPoweredWeapon(ptable, "secondary")
 	elseif queuedWeaponId == 50 then
 		return "Skill_Repair"
+	else
+		return poweredWeapons[queuedWeaponId]
 	end
 
 	return nil
