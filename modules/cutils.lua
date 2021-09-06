@@ -33,29 +33,6 @@ function cutils:init()
 	end
 
 	if cutils_verbose_calls.enabled then
-		for name, fn in pairs(_G[NAME].Pawn) do
-			if type(fn) == 'function' then
-				local oldFn = fn
-				_G[NAME].Pawn[name] = function(...)
-					LOGF("Calling Pawn:%s(...)", name)
-					local result = oldFn(...)
-					LOGF("Called Pawn:%s(...) successfully", name)
-					return result
-				end
-			end
-		end
-
-		for name, fn in pairs(_G[NAME].Board) do
-			if type(fn) == 'function' then
-				local oldFn = fn
-				_G[NAME].Board[name] = function(...)
-					LOGF("Calling Board:%s(...)", name)
-					local result = oldFn(...)
-					LOGF("Called Board:%s(...) successfully", name)
-					return result
-				end
-			end
-		end
 	end
 end
 
