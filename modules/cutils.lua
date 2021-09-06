@@ -29,10 +29,7 @@ function cutils:init()
 	if not ok then
 		error(string.format("%s %s - %s", failMsg, cutilsPath, err))
 	else
-		LOGF("%s into global table _G[\"%s\"]", successMsg, NAME)
-	end
-
-	if cutils_verbose_calls.enabled then
+		LOGDF("%s into global table _G[\"%s\"]", successMsg, options.name)
 	end
 end
 
