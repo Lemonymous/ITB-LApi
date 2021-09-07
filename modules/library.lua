@@ -115,7 +115,7 @@ end
 -- library.new can be called again to create a new
 -- instance.
 function library:new(lib_id, mod_id, additionalFolders)
-	self:fetch(lib_id, mod_id, additionalFolders, true)
+	return self:fetch(lib_id, mod_id, additionalFolders, true)
 end
 
 function library:fetch(lib_id, mod_id, additionalFolders, newInstance)
