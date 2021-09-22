@@ -1,5 +1,8 @@
 
 local cutils = LApi.cutils:get()
+local FIRE_TYPE_NO_FIRE = 0
+local FIRE_TYPE_NORMAL_FIRE = 1
+local FIRE_TYPE_FOREST_FIRE = 2
 
 PATH_JUMPER = 6
 PATH_TELEPORTER = 5
@@ -57,6 +60,33 @@ BoardClassEx.IsForestFire = function(self, loc)
 	}
 
 	return cutils.Board.GetFireType(loc) == 2
+end
+
+BoardClassEx.SetForest = function(self, loc)
+	Assert.Signature{
+		ret = "void",
+		func = "SetForest",
+		params = { self, loc },
+		{ "userdata|GameBoard&", "userdata|Point" }
+	}
+
+	if cutils.Board.GetFireType(loc) > 0 then
+		self:SetForestFire(loc)
+	else
+		self:SetTerrainVanilla(loc, TERRAIN_FOREST)
+	end
+end
+
+BoardClassEx.SetForestFire = function(self, loc)
+	Assert.Signature{
+		ret = "void",
+		func = "SetForestFire",
+		params = { self, loc },
+		{ "userdata|GameBoard&", "userdata|Point" }
+	}
+
+	self:SetTerrainVanilla(loc, TERRAIN_ROAD)
+	cutils.Board.SetFireType(loc, FIRE_TYPE_FOREST_FIRE)
 end
 
 BoardClassEx.SetShield = function(self, loc, shield, no_animation)
@@ -581,6 +611,33 @@ function InitializeBoardClass(board)
 		end
 		
 		return self:IsTerrainVanilla(loc, iTerrain)
+	end
+	
+	BoardClassEx.SetFireVanilla = board.SetFire
+	BoardClassEx.SetFire = function(self, loc, fire)
+		Assert.Signature{
+			ret = "void",
+			func = "SetFire",
+			params = { self, loc, fire },
+			{ "userdata|GameBoard&", "userdata|Point", "boolean|bool" },
+			{ "userdata|GameBoard&", "userdata|Point" }
+		}
+		
+		local iTerrain = self:GetTerrain(loc)
+		local isForestFire = self:IsForestFire(loc)
+		
+		if fire == nil then
+			fire = true
+		end
+		
+		self:SetFireVanilla(loc, fire)
+		
+		-- update forest fire graphics
+		if fire then
+			if iTerrain == TERRAIN_FOREST or isForestFire then
+				self:SetForestFire(loc)
+			end
+		end
 	end
 	
 	-- added no_animation parameter similar to what vanilla function SetSmoke has.
