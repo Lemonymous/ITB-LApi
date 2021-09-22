@@ -400,6 +400,17 @@ BoardClassEx.SetSnow = function(self, loc, snow)
 	end
 end
 
+BoardClassEx.IsSnow = function(self, loc)
+	Assert.Signature{
+		ret = "bool",
+		func = "IsSnow",
+		params = { self, loc },
+		{ "userdata|GameBoard&", "userdata|Point" }
+	}
+	
+	return self:GetCustomTile(loc) == "snow.png"
+end
+
 BoardClassEx.GetItemName = function(self, loc)
 	Assert.Signature{
 		ret = "string",
