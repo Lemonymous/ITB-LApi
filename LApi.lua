@@ -46,7 +46,7 @@ if LApi == nil or not modApi:isVersion(VERSION, LApi.version) then
 		self.scripts:init(path.."modules/", modules)
 		self.scripts:init(path.."extensions/", extensions)
 
-		modApi:addModsLoadedHook(onModsLoaded)
+		modApi.events.onModsLoaded:subscribe(onModsLoaded)
 	end
 
 	function LApi:finalizeLoad()
