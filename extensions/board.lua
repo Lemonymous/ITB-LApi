@@ -140,13 +140,13 @@ BoardClassEx.SetWater = function(self, loc, water, sink)
 			d.iTerrain = TERRAIN_LAVA
 			self:DamageSpace(d)
 		else
-			self:SetTerrain(loc, TERRAIN_WATER)
+			self:SetTerrainVanilla(loc, TERRAIN_WATER)
 		end
 		
 		self:SetLava(loc, false)
 		self:SetAcid(loc, false)
 	elseif self:GetTerrain(loc) == TERRAIN_WATER then
-		self:SetTerrain(loc, TERRAIN_ROAD)
+		self:SetTerrainVanilla(loc, TERRAIN_ROAD)
 	end
 end
 
@@ -165,14 +165,14 @@ BoardClassEx.SetAcidWater = function(self, loc, acid, sink)
 			d.iTerrain = TERRAIN_LAVA
 			self:DamageSpace(d)
 		else
-			self:SetTerrain(loc, TERRAIN_WATER)
+			self:SetTerrainVanilla(loc, TERRAIN_WATER)
 		end
 		
 		self:SetLava(loc, false)
 		self:SetAcid(loc, true)
 	elseif self:GetTerrain(loc) == TERRAIN_WATER and self:IsAcid(loc) then
 		self:SetAcid(loc, false)
-		self:SetTerrain(loc, TERRAIN_ROAD)
+		self:SetTerrainVanilla(loc, TERRAIN_ROAD)
 	end
 end
 
@@ -283,10 +283,13 @@ BoardClassEx.SetBuilding = function(self, loc, hp, hp_max)
 	cutils.Board.SetMaxHealth(loc, hp_max)
 	cutils.Board.SetHealth(loc, hp)
 	
-	self:SetTerrain(loc, TERRAIN_BUILDING)
+	self:SetTerrainVanilla(loc, TERRAIN_ROAD)
+	self:SetTerrainVanilla(loc, TERRAIN_BUILDING)
 	
 	if hp > 0 then
 		self:SetPopulated(true, loc)
+	else
+		self:SetRubble(loc)
 	end
 end
 
@@ -298,10 +301,9 @@ BoardClassEx.SetMountain = function(self, loc, hp)
 		{ "userdata|GameBoard&", "userdata|Point", "number|int" }
 	}
 	
-	self:SetTerrain(loc, TERRAIN_MOUNTAIN)
+	self:SetTerrainVanilla(loc, TERRAIN_MOUNTAIN)
 	
 	if hp > 0 then
-		cutils.Board.SetMaxHealth(loc, 2)
 		cutils.Board.SetHealth(loc, hp)
 	else
 		self:SetRubble(loc)
@@ -316,14 +318,14 @@ BoardClassEx.SetIce = function(self, loc, hp)
 		{ "userdata|GameBoard&", "userdata|Point", "number|int" }
 	}
 	
-	self:SetTerrain(loc, TERRAIN_ICE)
+	self:SetTerrainVanilla(loc, TERRAIN_ICE)
 	
 	if hp > 0 then
 		cutils.Board.SetMaxHealth(loc, 2)
 		cutils.Board.SetHealth(loc, hp)
 	else
-		self:SetTerrain(loc, TERRAIN_ROAD)
-		self:SetTerrain(loc, TERRAIN_WATER)
+		self:SetTerrainVanilla(loc, TERRAIN_ROAD)
+		self:SetTerrainVanilla(loc, TERRAIN_WATER)
 	end
 end
 
@@ -344,13 +346,18 @@ BoardClassEx.SetRubble = function(self, loc, flag)
 	
 	if flag then
 		if iTerrain == TERRAIN_BUILDING then
-			local hp_max = self:GetMaxHealth(loc)
-			self:SetBuilding(loc, 0, hp_max)
+			cutils.Board.SetHealth(loc, 0)
+			cutils.Board.SetRubbleType(loc, RUBBLE_BUILDING)
+			self:SetTerrainVanilla(loc, TERRAIN_BUILDING)
+			cutils.Board.SetTerrain(loc, TERRAIN_RUBBLE)
 			
 		elseif iTerrain == TERRAIN_MOUNTAIN then
-			self:SetTerrain(loc, TERRAIN_ROAD)
+			cutils.Board.SetHealth(loc, 0)
 			cutils.Board.SetRubbleType(loc, RUBBLE_MOUNTAIN)
-			self:SetTerrain(loc, TERRAIN_RUBBLE)
+			cutils.Board.SetTerrain(loc, TERRAIN_RUBBLE)
+			
+		else
+			self:SetTerrainVanilla(loc, TERRAIN_RUBBLE)
 		end
 		
 	elseif iTerrain == TERRAIN_RUBBLE then
@@ -362,7 +369,7 @@ BoardClassEx.SetRubble = function(self, loc, flag)
 			self:SetBuilding(loc, hp_max, hp_max)
 			
 		else
-			self:SetTerrain(loc, TERRAIN_MOUNTAIN)
+			self:SetTerrainVanilla(loc, TERRAIN_MOUNTAIN)
 		end
 	end
 end
@@ -530,9 +537,6 @@ function InitializeBoardClass(board)
 		end
 	end
 	
-	-- Note for future digging:
-	-- (glitchy vanilla behavior) setting building on water messes up the tile somehow,
-	-- making the water stick around even when attempting to change the terrain later.
 	BoardClassEx.SetTerrainVanilla = board.SetTerrain
 	BoardClassEx.SetTerrain = function(self, loc, iTerrain)
 		Assert.Signature{
@@ -547,41 +551,26 @@ function InitializeBoardClass(board)
 			
 		elseif iTerrain == TERRAIN_ICE_CRACKED then
 			self:SetIce(loc, 1)
-		
+			
+		elseif iTerrain == TERRAIN_FOREST then
+			self:SetForest(loc)
+			
 		elseif iTerrain == TERRAIN_FOREST_FIRE then
-			self:SetTerrain(loc, TERRAIN_FOREST)
-			self:SetFire(loc)
+			self:SetForestFire(loc)
 			
+		elseif iTerrain == TERRAIN_BUILDING then
+			local health = self:GetHealth(loc)
+			local maxHealth = self:GetMaxHealth(loc)
+			self:SetBuilding(loc, health, maxHealth)
+			
+		elseif iTerrain == TERRAIN_RUBBLE then
+			self:SetRubble(loc)
 		else
-			-- unfreeze terrain if new terrain can not be frozen.
-			-- local isFreezeableTerrain = iTerrain == TERRAIN_BUILDING or iTerrain == TERRAIN_MOUNTAIN
-			
-			-- terrain with 0 health cannot be frozen.
-			local terrainHealth = self:GetHealth(loc)
-			-- isFreezeableTerrain = isFreezeableTerrain and terrainHealth > 0
-			
-			-- if Board:IsFrozen(loc) and not isFreezeableTerrain then
-				-- Board:SetFrozen(loc, false, true)
-			-- end
-			
 			self:SetTerrainVanilla(loc, iTerrain)
-			
-			if iTerrain == TERRAIN_FOREST and self:IsFire(loc) then
-				-- update tile after placing forest on fire, to avoid graphical glitch.
-				self:SetFire(loc)
-			end
-			
-			if iTerrain == TERRAIN_RUBBLE then
-				-- keep max health after setting TERRAIN_RUBBLE
-				cutils.Board.SetMaxHealth(loc, terrainHealth)
-			end
-			
-			if iTerrain == TERRAIN_BUILDING and terrainHealth == 0 then
-				-- update tile after placing building on rubble,
-				-- so visual and functional rubble always returns TERRAIN_RUBBLE
-				cutils.Board.SetRubbleType(loc, RUBBLE_BUILDING)
-				cutils.Board.SetTerrain(loc, TERRAIN_RUBBLE)
-			end
+		end
+		
+		if iTerrain ~= TERRAIN_FOREST and iTerrain ~= TERRAIN_FOREST_FIRE and self:IsForestFire(loc) then
+			cutils.Board.SetFireType(loc, FIRE_TYPE_NORMAL_FIRE)
 		end
 	end
 	
@@ -653,7 +642,7 @@ function InitializeBoardClass(board)
 		}
 		
 		local iTerrain = self:GetTerrain(loc)
-		local isFreezeableTerrain = iTerrain == TERRAIN_BUILDING or iTerrain == TERRAIN_MOUNTAIN
+		local isFreezableTerrain = iTerrain == TERRAIN_BUILDING or iTerrain == TERRAIN_MOUNTAIN
 		
 		if frozen == nil then
 			frozen = true
@@ -663,19 +652,23 @@ function InitializeBoardClass(board)
 			no_animation = false
 		end
 		
-		if no_animation and self:GetCustomTile(loc) == "" then
-			self:SetCustomTile(loc, "snow.png")
-		end
-		
-		if no_animation and self:IsPawnSpace(loc) then
-			self:GetPawn(loc):SetFrozen(frozen, no_animation)
-			
+		if no_animation then
 			if frozen then
-				cutils.Board.SetFire(loc, false)
+				if self:GetCustomTile(loc) == "" then
+					self:SetCustomTile(loc, "snow.png")
+				end
+				
+				if cutils.Board.GetFireType(loc) ~= FIRE_TYPE_NO_FIRE then
+					cutils.Board.SetFireType(loc, FIRE_TYPE_NO_FIRE)
+				end
 			end
 			
-		elseif no_animation and isFreezeableTerrain then
-			cutils.Board.SetFrozen(loc, frozen)
+			if isFreezableTerrain then
+				cutils.Board.SetFrozen(loc, frozen)
+				
+			elseif self:IsPawnSpace(loc) then
+				self:GetPawn(loc):SetFrozen(frozen, no_animation)
+			end
 		else
 			self:SetFrozenVanilla(loc, frozen)
 		end
