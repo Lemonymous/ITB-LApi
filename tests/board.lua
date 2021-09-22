@@ -29,6 +29,26 @@ function testsuite.test_BoardSetFire()
 	return true
 end
 
+function testsuite.test_BoardForestFire()
+	local loc = Point(0,0)
+	Board:ClearSpace(loc)
+	
+	Board:SetForestFire(loc);				local forestFire = Board:IsForestFire(loc) == true
+	Board:SetTerrain(loc, TERRAIN_ROAD);	local isNormalFire = Board:IsFire(loc) == true
+											local notForestFire = Board:IsForestFire(loc) == false
+	Board:SetForestFire(loc);
+	Board:SetFire(loc, false);				local isForest = Board:IsForest(loc) == true
+											local notFire = Board:IsFire(loc) == false
+	
+	Assert.True(forestFire)
+	Assert.True(isNormalFire)
+	Assert.True(notForestFire)
+	Assert.True(isForest)
+	Assert.True(notFire)
+	
+	return true
+end
+
 function testsuite.test_BoardIsShield()
 	local loc = Point(0,0)
 	Board:ClearSpace(loc)
@@ -193,6 +213,48 @@ function testsuite.test_BoardSetRubble()
 	Assert.True(rubble)
 	Assert.True(mountain)
 	Assert.True(building)
+	
+	return true
+end
+
+function testsuite.test_BoardSetFrozen()
+	local loc = Point(0,0)
+	Board:ClearSpace(loc)
+	Board:SetTerrain(loc, TERRAIN_MOUNTAIN)
+	
+	Board:SetFrozen(loc, false);				local notFrozen1 = Board:IsFrozen(loc) == false
+												local notSnow1 = Board:IsSnow(loc) == false
+	
+	Board:SetFrozen(loc, true);					local isFrozen1 = Board:IsFrozen(loc) == true
+												local isSnow1 = Board:IsSnow(loc) == true
+	
+	Board:SetFrozen(loc, false);				local notFrozen2 = Board:IsFrozen(loc) == false
+												local isSnow2 = Board:IsSnow(loc) == true
+	
+	Board:ClearSpace(loc)
+	Board:SetTerrain(loc, TERRAIN_MOUNTAIN)
+	
+	Board:SetFrozen(loc, false, true);			local notFrozen3 = Board:IsFrozen(loc) == false
+												local notSnow2 = Board:IsSnow(loc) == false
+	
+	Board:SetFrozen(loc, true, true);			local isFrozen2 = Board:IsFrozen(loc) == true
+												local isSnow3 = Board:IsSnow(loc) == true
+	
+	Board:SetFrozen(loc, false, true);			local notFrozen4 = Board:IsFrozen(loc) == false
+												local isSnow4 = Board:IsSnow(loc) == true
+	
+	Assert.True(notFrozen1)
+	Assert.True(notSnow1)
+	Assert.True(isFrozen1)
+	Assert.True(isSnow1)
+	Assert.True(notFrozen2)
+	Assert.True(isSnow2)
+	Assert.True(notFrozen3)
+	Assert.True(notSnow2)
+	Assert.True(isFrozen2)
+	Assert.True(isSnow3)
+	Assert.True(notFrozen4)
+	Assert.True(isSnow4)
 	
 	return true
 end
