@@ -29,6 +29,42 @@ for _, fn_name in ipairs(mod_loader_functions) do
 	BoardClassEx[fn_name] = BoardClass[fn_name]
 end
 
+BoardClassEx.GetBoardTable = function(self)
+	Assert.Signature{
+		ret = "table",
+		func = "GetBoardTable",
+		params = { self },
+		{ "userdata|GameBoard&" }
+	}
+
+	local region = GetCurrentRegion()
+
+	if region then
+		return region.player.map_data.map
+	end
+
+	return {}
+end
+
+BoardClassEx.GetTileTable = function(self, loc)
+	Assert.Signature{
+		ret = "table",
+		func = "GetTileTable",
+		params = { self, loc },
+		{ "userdata|GameBoard&", "userdata|Point" }
+	}
+
+	local boardTable = self:GetBoardTable()
+
+	for _, entry in ipairs(boardTable) do
+		if entry.loc == loc then
+			return entry
+		end
+	end
+
+	return {}
+end
+
 BoardClassEx.IsShield = function(self, loc)
 	Assert.Signature{
 		ret = "bool",
