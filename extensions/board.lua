@@ -16,19 +16,6 @@ RUBBLE_MOUNTAIN = 1
 
 local BoardClassEx = {}
 
-local mod_loader_functions = {
-	"MovePawnsFromTile",
-	"RestorePawnsToTile",
-	"GetLuaString",
-	"GetString",
-}
-
-local BoardClassEx = {}
-
-for _, fn_name in ipairs(mod_loader_functions) do
-	BoardClassEx[fn_name] = BoardClass[fn_name]
-end
-
 BoardClassEx.GetBoardTable = function(self)
 	Assert.Signature{
 		ret = "table",
