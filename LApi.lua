@@ -6,6 +6,7 @@ local extensions = {
 	"board",
 	"pawn",
 	"game",
+	"trackBoard",
 }
 local tests = {
 	"board",
@@ -41,6 +42,8 @@ modApi:addModsInitializedHook(onModsInitialized)
 if LApi == nil or not modApi:isVersion(VERSION, LApi.version) then
 	LApi = LApi or {}
 	LApi.version = VERSION
+
+	require(path.."events")
 
 	function LApi:finalizeInit()
 		self.scripts:init(path.."modules/", modules)
