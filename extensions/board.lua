@@ -449,6 +449,21 @@ BoardClassEx.GetItemName = function(self, loc)
 	return cutils.Board.GetItemName(loc)
 end
 
+BoardClassEx.GetUniqueBuildingName = function(self, loc)
+	Assert.Signature{
+		ret = "string",
+		func = "GetUniqueBuildingName",
+		params = { self, loc },
+		{ "userdata|GameBoard&", "userdata|Point" }
+	}
+	
+	if not self:IsUniqueBuilding(loc) then
+		return nil
+	end
+	
+	return cutils.Board.GetUniqueBuildingName(loc)
+end
+
 BoardClassEx.GetHighlighted = function(self)
 	Assert.Signature{
 		ret = "void",
