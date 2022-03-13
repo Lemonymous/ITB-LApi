@@ -19,16 +19,14 @@ local modules = {
 }
 
 local function onModsInitialized()
-	if VERSION < LApi.version then
-		return
-	end
+	local isHighestVersion = true
+		and LApi.initialized ~= true
+		and LApi.version == VERSION
 
-	if LApi.initialized then
-		return
+	if isHighestVersion then
+		LApi:finalizeInit()
+		LApi.initialized = true
 	end
-
-	LApi:finalizeInit()
-	LApi.initialized = true
 end
 
 local function onModsLoaded()
@@ -39,7 +37,11 @@ end
 
 modApi:addModsInitializedHook(onModsInitialized)
 
-if LApi == nil or not modApi:isVersion(VERSION, LApi.version) then
+local isNewerVersion = false
+	or LApi == nil
+	or VERSION > LApi.version
+
+if isNewerVersion then
 	LApi = LApi or {}
 	LApi.version = VERSION
 
