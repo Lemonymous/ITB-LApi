@@ -1,10 +1,6 @@
 
-local baseStart = Mission.BaseStart
-function Mission:BaseStart(...)
-	baseStart(self, ...)
-
+local function initTrackedTiles()
 	local trackedTiles = {}
-	self.trackedTiles = trackedTiles
 
 	for index, point in ipairs(Board) do
 		local trackedTile = {}
@@ -25,6 +21,8 @@ function Mission:BaseStart(...)
 		trackedTile.fire = false
 		trackedTile.acid = false
 	end
+
+	return trackedTiles
 end
 
 local baseUpdate = Mission.BaseUpdate
@@ -32,6 +30,10 @@ function Mission:BaseUpdate(...)
 	baseUpdate(self, ...)
 
 	local trackedTiles = self.trackedTiles
+
+	if trackedTiles == nil then
+		trackedTiles = initTrackedTiles()
+	end
 
 	for index, point in ipairs(Board) do
 		local trackedTile = trackedTiles[index]
