@@ -216,6 +216,22 @@ BoardPawn.SetJumper = function(self, jumper)
 	cutils.Pawn.SetJumper(self, jumper)
 end
 
+BoardPawn.SetPushable = function(self, pushable)
+	Assert.Signature{
+		ret = "void",
+		func = "SetPushable",
+		params = { self, pushable },
+		{ "userdata|BoardPawn&", "boolean|bool" },
+		{ "userdata|BoardPawn&" }
+	}
+
+	if pushable == nil then
+		pushable = true
+	end
+
+	cutils.Pawn.SetPushable(self, pushable)
+end
+
 BoardPawn.GetMaxHealth = function(self)
 	Assert.Signature{
 		ret = "int",
