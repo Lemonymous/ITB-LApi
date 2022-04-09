@@ -10,6 +10,7 @@ local function initTrackedTiles()
 		trackedTile.health = Board:GetHealth(point)
 		trackedTile.healthMax = Board:GetMaxHealth(point)
 
+		trackedTile.highlighted = false
 		trackedTile.building = false
 		trackedTile.uniqueBuilding = false
 		trackedTile.uniqueBuildingName = nil
@@ -39,6 +40,7 @@ function Mission:BaseUpdate(...)
 	for index, point in ipairs(Board) do
 		local trackedTile = trackedTiles[index]
 
+		local highlighted = Board:IsHighlighted(point)
 		local terrain = Board:GetTerrain(point)
 		local health = Board:GetHealth(point)
 		local healthMax = Board:GetMaxHealth(point)
@@ -53,6 +55,18 @@ function Mission:BaseUpdate(...)
 		local smoke = Board:IsSmoke(point)
 		local fire = Board:IsFire(point)
 		local acid = Board:IsAcid(point)
+
+		if highlighted ~= trackedTile.highlighted then
+			local mission = GetCurrentMission()
+
+			if highlighted then
+				modApi.events.onTileHighlighted:dispatch(mission, point)
+			else
+				modApi.events.onTileUnhighlighted:dispatch(mission, point)
+			end
+
+			trackedTile.highlighted = highlighted
+		end
 
 		if health ~= trackedTile.health then
 			modApi.events.onTileHealthChanged:dispatch(point, trackedTile.health, health)

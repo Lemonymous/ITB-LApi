@@ -1,5 +1,7 @@
 
 local events = {
+	"onTileHighlighted",
+	"onTileUnhighlighted",
 	"onTileTerrainChanged",
 	"onTileHealthChanged",
 	"onTileMaxHealthChanged",
