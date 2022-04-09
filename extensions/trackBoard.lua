@@ -33,6 +33,7 @@ function Mission:BaseUpdate(...)
 
 	if trackedTiles == nil then
 		trackedTiles = initTrackedTiles()
+		self.trackedTiles = trackedTiles
 	end
 
 	for index, point in ipairs(Board) do
