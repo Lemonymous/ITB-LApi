@@ -675,6 +675,10 @@ function InitializeBoardClass(board)
 			if iTerrain == TERRAIN_FOREST or isForestFire then
 				self:SetForestFire(loc)
 			end
+		else
+			if isForestFire then
+				self:SetTerrain(loc, TERRAIN_FOREST)
+			end
 		end
 	end
 	
